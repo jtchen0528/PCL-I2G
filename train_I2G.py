@@ -21,12 +21,6 @@ from PIL import Image
 def train(opt):
     torch.manual_seed(opt.seed)
 
-    dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
-    # halves batch size since each batch returns both real and fake ims
-    dl = DataLoader(dset, batch_size=opt.batch_size,
-                    num_workers=opt.nThreads, pin_memory=False,
-                    shuffle=True)
-
     # setup class labeling
     assert(opt.fake_class_id in [0, 1])
     fake_label = opt.fake_class_id
@@ -55,6 +49,12 @@ def train(opt):
         epoch_start_time = time.time()
         iter_data_time = time.time()
         epoch_iter = 0
+
+        dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
+        # halves batch size since each batch returns both real and fake ims
+        dl = DataLoader(dset, batch_size=opt.batch_size,
+                        num_workers=opt.nThreads, pin_memory=False,
+                        shuffle=True)
 
         for i, ims in enumerate(dl):
             images = ims['img'].to(opt.gpu_ids[0])

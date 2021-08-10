@@ -53,6 +53,15 @@ def generate_landmark_file(dir):
     return cache
 
 
+def get32frames(data_list):
+    orig_vid = set([x.split('_')[0] for x in data_list])
+    new_data_list = []
+    for vid_name in orig_vid:
+        vids = filter(lambda x: x.split('_')[0] == vid_name, data_list)
+        vids = random.sample(vids, 32)
+        new_data_list += vids
+    return new_data_list
+
 class I2GDataset(data.Dataset):
     def __init__(self, opt, dir_real, is_val=False):
         self.dir_real = dir_real
@@ -60,6 +69,7 @@ class I2GDataset(data.Dataset):
         with open(landmark_record_filename, 'rb') as f:
             self.landmarks_record = pickle.load(f)
             self.data_list = list(self.landmarks_record.keys())
+            self.data_list = get32frames(self.data_list)
             self.data_size = len(self.data_list)
             if self.data_size > opt.max_dataset_size:
                 self.data_list = random.sample(
