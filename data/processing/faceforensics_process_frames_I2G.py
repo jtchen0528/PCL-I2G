@@ -41,7 +41,7 @@ for i, s in enumerate(tqdm(split)):
     counter = 0
     for j, orig_frame in enumerate(original_video_frames):
         orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig_frame)
-        print(orig_frame_path)
+        # print(orig_frame_path)
         orig = cv2.imread(orig_frame_path)
         orig = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB)
         if os.path.isfile(os.path.join(outdir, 'detections', split_name,
@@ -71,5 +71,7 @@ for i, s in enumerate(tqdm(split)):
                 break
         except:
             print("Error:", sys.exc_info()[0])
+        if j == 10:
+            break
 fh = open(os.path.join(outdir, 'original', split_name, split_name + '_landmark.pkl'), 'wb')
 pickle.dump(mask_landmark_list, fh)
