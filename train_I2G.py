@@ -21,13 +21,19 @@ from PIL import Image
 def train(opt):
     torch.manual_seed(opt.seed)
 
+    dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
+    # halves batch size since each batch returns both real and fake ims
+    dl = DataLoader(dset, batch_size=opt.batch_size,
+                    num_workers=opt.nThreads, pin_memory=False,
+                    shuffle=True)
+
     # setup class labeling
     assert(opt.fake_class_id in [0, 1])
     fake_label = opt.fake_class_id
     real_label = 1 - fake_label
     logging.info("real label = %d" % real_label)
     logging.info("fake label = %d" % fake_label)
-    dataset_size = 2 * len(dset)
+    dataset_size = len(dset)
     logging.info('# total images = %d' % dataset_size)
     logging.info('# total batches = %d' % len(dl))
 
@@ -49,12 +55,6 @@ def train(opt):
         epoch_start_time = time.time()
         iter_data_time = time.time()
         epoch_iter = 0
-
-        dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
-        # halves batch size since each batch returns both real and fake ims
-        dl = DataLoader(dset, batch_size=opt.batch_size,
-                        num_workers=opt.nThreads, pin_memory=False,
-                        shuffle=True)
 
         for i, ims in enumerate(dl):
             images = ims['img'].to(opt.gpu_ids[0])
@@ -158,6 +158,12 @@ def train(opt):
         model.update_learning_rate(
             metric=val_losses[model.val_metric + '_val'])
         epoch += 1
+
+        dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
+        # halves batch size since each batch returns both real and fake ims
+        dl = DataLoader(dset, batch_size=opt.batch_size,
+                        num_workers=opt.nThreads, pin_memory=False,
+                        shuffle=True)
 
     # save model at the end of training
     visualizer.save_final_plots()
