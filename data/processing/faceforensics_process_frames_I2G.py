@@ -42,15 +42,15 @@ for i, s in enumerate(tqdm(split)):
 
     counter = 0
     for j, orig_frame in enumerate(original_video_frames):
-        orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig_frame)
-        # print(orig_frame_path)
-        orig = io.imread(orig_frame_path)
         if os.path.isfile(os.path.join(outdir, 'detections', split_name,
                                        '%s_%03d.npz' % (vidname, j))):
             print('Found existing %s_%03d.npz' % (vidname, j))
             counter += 1
             continue
         try:
+            orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig_frame)
+            # print(orig_frame_path)
+            orig = io.imread(orig_frame_path)
             # might return none or out of bounds error
             # use original landmarks
             cropped_orig, landmarks = celebahq_crop(orig)
