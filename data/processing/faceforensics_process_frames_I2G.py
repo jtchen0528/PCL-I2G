@@ -9,6 +9,7 @@ from utils import pidfile
 import numpy as np
 from data.processing.celebahq_crop import celebahq_crop, I2G_crop
 import pickle
+import cv2
 
 parser = argparse.ArgumentParser(description='Process and align face forensics frames')
 parser.add_argument('--source_dir_original', required=True, help='source videos directory, e.g. original_sequences/youtube/c23/videos')
@@ -41,7 +42,7 @@ for i, s in enumerate(tqdm(split)):
     for j, orig_frame in enumerate(original_video_frames):
         orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig_frame)
         print(orig_frame_path)
-        orig = Image.open(orig_frame_path)
+        orig = cv2.imread(orig_frame_path)
         if os.path.isfile(os.path.join(outdir, 'detections', split_name,
                                        '%s_%03d.npz' % (vidname, j))):
             print('Found existing %s_%03d.npz' % (vidname, j))
