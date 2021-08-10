@@ -254,7 +254,7 @@ class I2GDataset(data.Dataset):
 
         # random sample 5000 frame from all frams:
         # sample_num = int(self.data_size * 0.2)
-        sample_num = 5000
+        sample_num = 50
         all_candidate_path = random.sample(self.data_list, k=sample_num)
 
         # filter all frame that comes from the same video as background face
