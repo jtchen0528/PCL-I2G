@@ -13,6 +13,7 @@ runs/
 runs_finished/
 resources/*
 !resources/download_resources*
+!resources/splits*
 utils/rf_cache/
 notebooks/plots/
 
