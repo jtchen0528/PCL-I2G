@@ -54,7 +54,7 @@ def generate_landmark_file(dir):
 
 
 def get32frames(data_list):
-    orig_vid = set([x.split('_')[0] for x in data_list])
+    orig_vid = list(set([x.split('_')[0] for x in data_list]))
     new_data_list = []
     for vid_name in orig_vid:
         vids = filter(lambda x: x.split('_')[0] == vid_name, data_list)
