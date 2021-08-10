@@ -9,10 +9,9 @@ gpu=9
 
 python train_I2G.py \
 	--gpu_ids $gpu --seed 0 --loadSize 128 --fineSize 128 \
-	--name TEST-I2G --save_epoch_freq 1 \
+	--name PCL-I2G-FF128-5e-5 --save_epoch_freq 1 \
  	--real_im_path $dset/Deepfakes/original \
  	--fake_im_path $dset/Deepfakes/manipulated \
 	--which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
 	--patience 5 --lr_policy constant --max_epochs 50 --batch_size 512 --lr 5e-5 \
-	--overwrite_config \
-	--max_dataset_size 1000
+	--overwrite_config
