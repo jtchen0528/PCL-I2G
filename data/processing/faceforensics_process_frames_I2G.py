@@ -42,7 +42,7 @@ for i, s in enumerate(tqdm(split)):
     for j, orig_frame in enumerate(original_video_frames):
         orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig_frame)
         print(orig_frame_path)
-        orig = cv2.imread(orig_frame_path)
+        orig = cv2.imread(orig_frame_path, cv2.IMREAD_UNCHANGED)
         if os.path.isfile(os.path.join(outdir, 'detections', split_name,
                                        '%s_%03d.npz' % (vidname, j))):
             print('Found existing %s_%03d.npz' % (vidname, j))
