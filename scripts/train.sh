@@ -13,5 +13,6 @@ python train_I2G.py \
  	--real_im_path $dset/Deepfakes/original \
  	--fake_im_path $dset/Deepfakes/manipulated \
 	--which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
-	--patience 5 --lr_policy constant --max_epochs 50 --batch_size 1024 --lr 5e-5 \
-	--overwrite_config
+	--patience 5 --lr_policy constant --max_epochs 50 --batch_size 512 --lr 5e-5 \
+	--overwrite_config \
+	--max_dataset_size 1000

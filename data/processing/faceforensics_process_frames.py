@@ -9,7 +9,7 @@ import sys
 from utils import pidfile
 import numpy as np
 from data.processing.celebahq_crop import celebahq_crop
-
+from skimage import io
 
 parser = argparse.ArgumentParser(description='Process and align face forensics frames')
 parser.add_argument('--source_dir_manipulated', required=True, help='source videos directory, e.g. manipulated_sequences/Deepfakes/c23/videos')
@@ -28,26 +28,30 @@ split_name = os.path.splitext(os.path.basename(args.split))[0]
 
 outdir = args.output_dir
 os.makedirs(outdir, exist_ok=True)
-os.makedirs(os.path.join(outdir, 'original', split_name), exist_ok=True)
+# os.makedirs(os.path.join(outdir, 'original', split_name), exist_ok=True)
 os.makedirs(os.path.join(outdir, 'manipulated', split_name), exist_ok=True)
-os.makedirs(os.path.join(outdir, 'detections', split_name), exist_ok=True)
+# os.makedirs(os.path.join(outdir, 'detections', split_name), exist_ok=True)
 
 for i, s in enumerate(tqdm(split)):
     vidname = '_'.join(s)
     vidname_orig = s[0] # take target sequence for original videos
     # print("%d: %s" % (i, vidname))
-    vidpath = os.path.join(args.source_dir_manipulated, vidname + '.mp4')
-    vidpath_orig = os.path.join(args.source_dir_original, vidname_orig + '.mp4')
+    vidpath = os.path.join(args.source_dir_manipulated, vidname)
+    vidpath_orig = os.path.join(args.source_dir_original, vidname_orig)
 
     if not os.path.isfile(vidpath):
         print("Video not found: %s" % vidpath)
         continue
 
-    manipulated_video = skvideo.io.vreader(vidpath)
-    original_video = skvideo.io.vreader(vidpath_orig)
+    video_frames = os.listdir(vidpath)
+    original_video_frames = os.listdir(vidpath_orig)
 
     counter = 0
-    for j, (frame, orig) in enumerate(zip(manipulated_video, original_video)):
+    for j, (frame, orig) in enumerate(zip(video_frames, original_video_frames)):
+        frame_path = os.path.join(args.source_dir_original, vidname, frame)
+        orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
+        frame = io.imread(frame_path)
+        orig = io.imread(orig_frame_path)
         if os.path.isfile(os.path.join(outdir, 'detections', split_name,
                                        '%s_%03d.npz' % (vidname, j))):
             print('Found existing %s_%03d.npz' % (vidname, j))
@@ -70,11 +74,11 @@ for i, s in enumerate(tqdm(split)):
             # save the results
             cropped.save(os.path.join(outdir, 'manipulated', split_name,
                                       '%s_%03d.png' % (vidname, j)))
-            cropped_orig.save(os.path.join(outdir, 'original', split_name,
-                                           '%s_%03d.png' % (vidname, j)))
-            np.savez(os.path.join(outdir, 'detections', split_name,
-                                  '%s_%03d.npz' % (vidname, j)),
-                     lm=landmarks)
+            # cropped_orig.save(os.path.join(outdir, 'original', split_name,
+            #                                '%s_%03d.png' % (vidname, j)))
+            # np.savez(os.path.join(outdir, 'detections', split_name,
+            #                       '%s_%03d.npz' % (vidname, j)),
+            #          lm=landmarks)
             counter += 1
 
             # for val/test partitions, just take 100 detected frames per video

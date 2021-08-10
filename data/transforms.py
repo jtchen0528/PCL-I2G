@@ -28,9 +28,12 @@ def get_transform(opt, for_val=False):
             opt.loadSize, interpolation=PIL.Image.LANCZOS))
         transform_list.append(transforms.CenterCrop(opt.fineSize))
 
+        transform_list.append(AllAugmentations())
+
     transform_list.append(transforms.ToTensor())
-    # transform_list.append(transforms.Normalize((0.5, 0.5, 0.5),
-    #                                            (0.5, 0.5, 0.5)))
+    transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
+                                               (0.229, 0.224, 0.225)))
+
     transform = transforms.Compose(transform_list)
     print(transform)
     logging.info(transform)
@@ -47,6 +50,23 @@ def get_mask_transform(opt, for_val=False):
     return transform
 
 ### additional augmentations ### 
+
+class AllAugmentations(object):
+    def __init__(self):
+        import albumentations
+        self.transform = albumentations.Compose([
+            albumentations.Blur(blur_limit=3),
+            albumentations.JpegCompression(quality_lower=30, quality_upper=100, p=0.5),
+            albumentations.RandomBrightnessContrast(),
+            albumentations.RandomGamma(gamma_limit=(80, 120)),
+            albumentations.CLAHE(),
+        ])
+
+    def __call__(self, image):
+        image_np = np.array(image)
+        augmented = self.transform(image=image_np)
+        image_pil = PIL.Image.fromarray(augmented['image'])
+        return image_pil
 
 class JPEGCompression(object):
     def __init__(self, level):
