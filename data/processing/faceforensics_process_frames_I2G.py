@@ -73,5 +73,7 @@ for i, s in enumerate(tqdm(split)):
             print("Error:", sys.exc_info()[0])
         if j == 10:
             break
+    if i == 3:
+        break
 fh = open(os.path.join(outdir, 'original', split_name, split_name + '_landmark.pkl'), 'wb')
 pickle.dump(mask_landmark_list, fh)
