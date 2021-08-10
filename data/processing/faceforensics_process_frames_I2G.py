@@ -10,7 +10,6 @@ import numpy as np
 from data.processing.celebahq_crop import celebahq_crop, I2G_crop
 import pickle
 from skimage import io
-img=io.imread('d:/dog.jpg')
 
 parser = argparse.ArgumentParser(description='Process and align face forensics frames')
 parser.add_argument('--source_dir_original', required=True, help='source videos directory, e.g. original_sequences/youtube/c23/videos')
