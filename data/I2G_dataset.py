@@ -62,6 +62,7 @@ def get32frames(data_list):
         new_data_list += vids
     return new_data_list
 
+
 class I2GDataset(data.Dataset):
     def __init__(self, opt, dir_real, is_val=False):
         self.dir_real = dir_real

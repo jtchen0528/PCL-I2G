@@ -13,7 +13,6 @@ def get_transform(opt, for_val=False):
         # patch discriminators have receptive field < whole image
         # so patch ensembling should use all patches in image
         transform_list.append(transforms.CenterCrop(opt.loadSize))
-        transform_list.append(AllAugmentations())
 
         # we can add other test time augmentations here
         if hasattr(opt, 'test_flip') and opt.test_flip:
