@@ -63,8 +63,8 @@ for i, s in enumerate(tqdm(split)):
             # save the results
             cropped.save(os.path.join(outdir, 'manipulated', split_name,
                                       '%s_%03d.png' % (vidname, j)))
-            cropped_orig.save(os.path.join(outdir, 'original', split_name,
-                                           '%s_%03d.png' % (vidname, j)))
+            # cropped_orig.save(os.path.join(outdir, 'original', split_name,
+            #                                '%s_%03d.png' % (vidname, j)))
             # np.savez(os.path.join(outdir, 'detections', split_name,
             #                       '%s_%03d.npz' % (vidname, j)),
             #          lm=landmarks)
