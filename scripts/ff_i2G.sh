@@ -1,7 +1,7 @@
 ### Deepfakes processing ###
 
 # # # train 
-python data.processing.faceforensics_process_frames_I2G_2.py \
+python -m data.processing.faceforensics_process_frames_I2G_2 \
 	--source_dir_manipulated ~/Documents/AIIU/Datasets/faceforensics/DF \
 	--source_dir_original ~/Documents/AIIU/Datasets/faceforensics/original \
 	--outsize 256 \
