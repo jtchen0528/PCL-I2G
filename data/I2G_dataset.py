@@ -239,6 +239,8 @@ class I2GDataset(data.Dataset):
         mask = self.random_get_hull(background_landmark, background_face)
         # # random deform mask
 
+        mask_color = mask
+
         mask = mask[:, :, 0:1]
 
         mask = elasticdeform.deform_random_grid(
@@ -249,7 +251,7 @@ class I2GDataset(data.Dataset):
 
         # apply color transfer
         foreground_face = self.colorTransfer(
-            background_face, foreground_face, mask)
+            background_face, foreground_face, mask_color * 255)
 
         # blend two face
         blended_face = self.composite(
