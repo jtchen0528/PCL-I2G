@@ -49,25 +49,12 @@ def generate_landmark(dir):
                     images_list[fname] = face_hull
     return images_list
 
-
-def get32frames(data_list):
-    orig_vid = set([x.split('_')[0] for x in data_list])
-    new_data_list = []
-    for vid_name in orig_vid:
-        vids = list(filter(lambda x: x.split('_')[0] == vid_name, data_list))
-        vids = random.sample(vids, 32)
-        new_data_list += vids
-    return new_data_list
-
-
 class I2GDataset(data.Dataset):
     def __init__(self, opt, dir_real, is_val=False):
         self.dir_real = dir_real
 
-        self.landmarks_record = generate_landmark(self.dir_real)
-        self.total_data_list = list(self.landmarks_record.keys())
+        self.landmarks_record = []
         self.data_list = []
-        self.data_size = len(self.data_list)
 
         self.distortion = iaa.Sequential(
             [iaa.PiecewiseAffine(scale=(0.01, 0.05))])
@@ -100,13 +87,31 @@ class I2GDataset(data.Dataset):
         return return_obj
 
     def get32frames(self):
-        orig_vid = set([x.split('_')[0] for x in self.total_data_list])
+        total_frames = os.listdir(self.dir_real)
+        orig_vid = set([x.split('_')[0] for x in total_frames])
         new_data_list = []
+        landmark_list = {}
+        again = True
         for vid_name in orig_vid:
-            vids = list(filter(lambda x: x.split('_')[0] == vid_name, self.total_data_list))
-            vids = random.sample(vids, 32)
-            new_data_list += vids
+            vids = list(filter(lambda x: x.split('_')[0] == vid_name, total_frames))
+            for i in range(32):
+                while again:
+                    selected_frame = random.sample(vids, 1)[0]
+                    try:
+                        path = os.path.join(self.dir_real, selected_frame)
+                        img = Image.open(path).convert('RGB')
+                        face_hull = find_face_landmark(np.array(img))
+                        point_num = face_hull.shape[0]
+                        face_hull = np.reshape(face_hull, [point_num, 2])
+                        new_data_list.append(selected_frame)
+                        landmark_list[selected_frame] = face_hull
+                        again = False
+                    except:
+                        again = True
+                vids = [item for item in vids if item not in selected_frame]
+                again = True
         self.data_list = new_data_list
+        self.landmarks_record = landmark_list
 
 
     def total_euclidean_distance(self, a, b):
