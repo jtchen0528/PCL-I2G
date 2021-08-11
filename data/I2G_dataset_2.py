@@ -26,28 +26,7 @@ def drawLandmark(img, landmark):
     for (x, y) in landmark:
         cv2.circle(img, (int(x), int(y)), 1, (0, 0, 255), -1)
     return img
-
-
-def generate_landmark(dir):
-    images = []
-    images_list = {}
-
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
-
-    for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
-        for fname in fnames:
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                img = Image.open(path).convert('RGB')
-                face_hull = find_face_landmark(np.array(img))
-                if face_hull is None:
-                    pass
-                else:
-                    point_num = face_hull.shape[0]
-                    face_hull = np.reshape(face_hull, [point_num, 2])
-                    images.append(path)
-                    images_list[fname] = face_hull
-    return images_list
+    
 
 class I2GDataset(data.Dataset):
     def __init__(self, opt, dir_real, is_val=False):
