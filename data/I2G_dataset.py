@@ -249,11 +249,11 @@ class I2GDataset(data.Dataset):
 
         # apply color transfer
         foreground_face = self.colorTransfer(
-            background_face, foreground_face, mask*255)
+            background_face, foreground_face, mask)
 
         # blend two face
         blended_face = self.composite(
-            foreground_face, background_face, mask)
+            background_face, background_face, mask)
         blended_face = blended_face.astype(np.uint8)
 
         mask = mask[:, :, 0]
