@@ -117,25 +117,6 @@ class I2GDataset(data.Dataset):
                 'int32'), face=img1, channels=3).mask
             return mask/255
 
-    def random_erode_dilate(self, mask, ksize=None):
-        if random.random() > 0.5:
-            if ksize is None:
-                ksize = random.randint(1, 21)
-            if ksize % 2 == 0:
-                ksize += 1
-            mask = np.array(mask).astype(np.uint8)*255
-            kernel = np.ones((ksize, ksize), np.uint8)
-            mask = cv2.erode(mask, kernel, 1)/255
-        else:
-            if ksize is None:
-                ksize = random.randint(1, 5)
-            if ksize % 2 == 0:
-                ksize += 1
-            mask = np.array(mask).astype(np.uint8)*255
-            kernel = np.ones((ksize, ksize), np.uint8)
-            mask = cv2.dilate(mask, kernel, 1)/255
-        return mask
-
     def blendImages(self, src, dst, mask, featherAmount=0.2):
 
         maskIndices = np.where(mask != 0)

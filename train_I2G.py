@@ -180,6 +180,7 @@ def validate(model, opt):
     assert(not model.net_D.training)
 
     val_dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'val'), is_val=True)
+    val_dset.get32frames()
     val_dl = DataLoader(val_dset, batch_size=opt.batch_size,
                         num_workers=opt.nThreads, pin_memory=False,
                         shuffle=True)
