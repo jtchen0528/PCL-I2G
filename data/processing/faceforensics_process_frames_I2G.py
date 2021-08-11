@@ -53,8 +53,8 @@ for i, s in enumerate(tqdm(split)):
             # might return none or out of bounds error
             # use original landmarks
             cropped_orig, landmarks = celebahq_crop(orig)
-            landmarks = I2G_crop(cropped_orig)
             cropped_orig = cropped_orig.resize((args.outsize, args.outsize), Image.LANCZOS)
+            # landmarks = I2G_crop(cropped_orig)
 
             cropped_orig.save(os.path.join(outdir, 'original', split_name,
                                            '%s_%03d.png' % (vidname, j)))
