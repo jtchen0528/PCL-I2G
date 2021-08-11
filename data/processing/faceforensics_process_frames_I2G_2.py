@@ -47,22 +47,21 @@ for i, s in enumerate(tqdm(split)):
 
     counter = 0
     for j, (frame, orig) in enumerate(zip(video_frames, original_video_frames)):
-        if os.path.isfile(os.path.join(outdir, 'original', split_name,
-                                       '%s_%03d.png' % (vidname, j))):
-            print('Found existing %s_%03d.png' % (vidname, j))
-            counter += 1
-            continue
+        frame_path_DF = os.path.join(args.source_dir_manipulated, 'DF', vidname, frame)
+        frame_path_F2F = os.path.join(args.source_dir_manipulated, 'F2F', vidname, frame)
+        frame_path_FS = os.path.join(args.source_dir_manipulated, 'FS', vidname, frame)
+        frame_path_NT = os.path.join(args.source_dir_manipulated, 'NT', vidname, frame)
+        orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
+        frame_DF = io.imread(frame_path_DF)
+        print('DF success %s' % frame_path_DF)
+        frame_F2F = io.imread(frame_path_F2F)
+        print('F2F success %s' % frame_path_F2F)
+        frame_FS = io.imread(frame_path_FS)
+        print('FS success %s' % frame_path_FS)
+        frame_NT = io.imread(frame_path_NT)
+        print('NT success %s' % frame_path_NT)
+        orig = io.imread(orig_frame_path)
         try:
-            frame_path_DF = os.path.join(args.source_dir_manipulated, 'DF', vidname, frame)
-            frame_path_F2F = os.path.join(args.source_dir_manipulated, 'F2F', vidname, frame)
-            frame_path_FS = os.path.join(args.source_dir_manipulated, 'FS', vidname, frame)
-            frame_path_NT = os.path.join(args.source_dir_manipulated, 'NT', vidname, frame)
-            orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
-            frame_DF = io.imread(frame_path_DF)
-            frame_F2F = io.imread(frame_path_F2F)
-            frame_FS = io.imread(frame_path_FS)
-            frame_NT = io.imread(frame_path_NT)
-            orig = io.imread(orig_frame_path)
             # might return none or out of bounds error
                 # use original landmarks
             cropped_orig, landmarks = celebahq_crop(orig)
