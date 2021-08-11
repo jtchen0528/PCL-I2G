@@ -243,7 +243,7 @@ class I2GDataset(data.Dataset):
 
         mask = elasticdeform.deform_random_grid(
             mask[:, :, 0], sigma=0.01, points=4)
-        mask = cv2.GaussianBlur(mask, (17, 17), 5)
+        mask = cv2.GaussianBlur(mask, (15, 15), 5)
 
         mask = np.stack((mask,)*3, axis=-1)
 
@@ -253,7 +253,7 @@ class I2GDataset(data.Dataset):
 
         # blend two face
         blended_face = self.composite(
-            foreground_face, background_face, mask*255)
+            foreground_face, background_face, mask)
         blended_face = blended_face.astype(np.uint8)
 
         mask = mask[:, :, 0]
