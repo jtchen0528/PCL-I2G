@@ -39,10 +39,10 @@ for i, s in enumerate(tqdm(split)):
     vidname = '_'.join(s)
     vidname_orig = s[0] # take target sequence for original videos
     # print("%d: %s" % (i, vidname))
-    vidpath = os.path.join(args.source_dir_manipulated, vidname)
+    vidpath = os.path.join(args.source_dir_manipulated, 'DF', vidname)
     vidpath_orig = os.path.join(args.source_dir_original, vidname_orig)
 
-    video_frames = os.listdir(vidpath + '/DF')
+    video_frames = os.listdir(vidpath)
     original_video_frames = os.listdir(vidpath_orig)
 
     counter = 0
