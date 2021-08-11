@@ -29,7 +29,7 @@ outdir = args.output_dir
 os.makedirs(outdir, exist_ok=True)
 os.makedirs(os.path.join(outdir, 'original', split_name), exist_ok=True)
 os.makedirs(os.path.join(outdir, 'detections', split_name), exist_ok=True)
-mask_landmark_list = {}
+# mask_landmark_list = {}
 
 for i, s in enumerate(tqdm(split)):
     vidname = '_'.join(s)
@@ -53,7 +53,7 @@ for i, s in enumerate(tqdm(split)):
             # might return none or out of bounds error
             # use original landmarks
             cropped_orig, landmarks = celebahq_crop(orig)
-            landmarks = I2G_crop(orig)
+            landmarks = I2G_crop(cropped_orig)
             cropped_orig = cropped_orig.resize((args.outsize, args.outsize), Image.LANCZOS)
 
             cropped_orig.save(os.path.join(outdir, 'original', split_name,
@@ -62,7 +62,7 @@ for i, s in enumerate(tqdm(split)):
                                   '%s_%03d.npz' % (vidname, j)),
                      lm=landmarks)
             counter += 1
-            mask_landmark_list['%s_%03d.png' % (vidname, j)] = landmarks
+            # mask_landmark_list['%s_%03d.png' % (vidname, j)] = landmarks
 
             # for val/test partitions, just take 100 detected frames per video
             if counter == 100 and split_name in ['test', 'val']:
@@ -71,5 +71,5 @@ for i, s in enumerate(tqdm(split)):
                 break
         except:
             print("Error:", sys.exc_info()[0])
-fh = open(os.path.join(outdir, 'original', split_name + '_landmark.pkl'), 'wb')
-pickle.dump(mask_landmark_list, fh)
+# fh = open(os.path.join(outdir, 'original', split_name + '_landmark.pkl'), 'wb')
+# pickle.dump(mask_landmark_list, fh)
