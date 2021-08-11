@@ -31,11 +31,11 @@ def get_transform(opt, for_val=False):
             opt.loadSize, interpolation=PIL.Image.LANCZOS))
         transform_list.append(transforms.CenterCrop(opt.fineSize))
 
-        transform_list.append(AllAugmentations())
+        # transform_list.append(AllAugmentations())
 
-        transform_list.append(transforms.ToTensor())
-        transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
-                                                (0.229, 0.224, 0.225)))
+        # transform_list.append(transforms.ToTensor())
+        # transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
+        #                                         (0.229, 0.224, 0.225)))
 
     transform = transforms.Compose(transform_list)
     print(transform)
