@@ -253,7 +253,7 @@ class I2GDataset(data.Dataset):
 
         # blend two face
         blended_face = self.composite(
-            background_face, background_face, mask)
+            background_face, foreground_face, mask)
         blended_face = blended_face.astype(np.uint8)
 
         mask = mask[:, :, 0]
