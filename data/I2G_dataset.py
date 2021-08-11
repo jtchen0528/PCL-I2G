@@ -146,6 +146,27 @@ class I2GDataset(data.Dataset):
 
         return composedImg, composedMask
 
+    def composite(self, background, foreground, alphamask):
+        "pastes the foreground image into the background image using the mask"
+        # remember the old datatype
+        old_type = background.dtype
+        # Convert uint8 to float
+        foreground = foreground.astype(float)
+        background = background.astype(float)
+        # Normalize the alpha mask to keep intensity between 0 and 1
+        alphamask = alphamask.astype(float)
+        # Multiply the foreground with the alpha matte
+        foreground = cv2.multiply(alphamask, foreground)
+        # Multiply the background with ( 1 - alpha )
+        background = cv2.multiply(1.0 - alphamask, background)
+        # Add the masked foreground and background
+        outImage = cv2.add(foreground, background)
+        outImage = outImage/255
+        # convert it back to old format
+        outImage = outImage*255
+        outImage = outImage.astype(old_type)
+        return outImage
+
     # borrow from https://github.com/MarekKowalski/FaceSwap
 
     def colorTransfer(self, src, dst, mask):
@@ -218,20 +239,24 @@ class I2GDataset(data.Dataset):
         mask = self.random_get_hull(background_landmark, background_face)
         # # random deform mask
 
+        mask = mask[:, :, 0:1]
+
+        mask = elasticdeform.deform_random_grid(
+            mask[:, :, 0], sigma=0.01, points=4)
+        mask = cv2.GaussianBlur(mask, (17, 17), 5)
+
+        mask = np.stack((mask,)*3, axis=-1)
+
         # apply color transfer
         foreground_face = self.colorTransfer(
             background_face, foreground_face, mask*255)
 
         # blend two face
-        blended_face, mask = self.blendImages(
+        blended_face = self.composite(
             foreground_face, background_face, mask*255)
         blended_face = blended_face.astype(np.uint8)
 
         mask = mask[:, :, 0:1]
-
-        mask = elasticdeform.deform_random_grid(
-            mask[:, :, 0], sigma=0.01, points=4)
-        mask = cv2.GaussianBlur(mask, (15, 15), 5)
 
         return blended_face, mask
 
