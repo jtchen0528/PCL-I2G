@@ -180,9 +180,9 @@ def validate(model, opt):
     assert(not model.net_D.training)
 
     val_dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'val'), is_val=True)
-    val_dl = DataLoader(val_dset, batch_size=opt.batch_size // 2,
+    val_dl = DataLoader(val_dset, batch_size=opt.batch_size,
                         num_workers=opt.nThreads, pin_memory=False,
-                        shuffle=False)
+                        shuffle=True)
     val_losses = OrderedDict([(k + '_val', util.AverageMeter())
                               for k in model.loss_names])
     fake_label = opt.fake_class_id

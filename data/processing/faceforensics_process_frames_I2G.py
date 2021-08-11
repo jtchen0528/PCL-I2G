@@ -38,7 +38,6 @@ for i, s in enumerate(tqdm(split)):
     vidpath_orig = os.path.join(args.source_dir_original, vidname_orig)
 
     original_video_frames = os.listdir(vidpath_orig)
-    original_video_frames = random.sample(original_video_frames, 32)
 
     counter = 0
     for j, orig_frame in enumerate(original_video_frames):
