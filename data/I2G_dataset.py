@@ -99,7 +99,7 @@ class I2GDataset(data.Dataset):
         return np.sum(np.linalg.norm(a-b, axis=1))
 
     def random_get_hull(self, landmark, img1):
-        hull_type = random.choice([0, 1, 2, 3])
+        hull_type = random.choice([3])
         if hull_type == 0:
             mask = dfl_full(landmarks=landmark.astype(
                 'int32'), face=img1, channels=3).mask
