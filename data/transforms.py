@@ -8,32 +8,22 @@ def get_transform(opt, for_val=False):
     transform_list = []
 
     if for_val:
-        transform_list.append(transforms.Resize(
-            opt.loadSize, interpolation=PIL.Image.LANCZOS))
-        # patch discriminators have receptive field < whole image
-        # so patch ensembling should use all patches in image
-        transform_list.append(transforms.CenterCrop(opt.loadSize))
-
-        # we can add other test time augmentations here
-        if hasattr(opt, 'test_flip') and opt.test_flip:
-            transform_list.append(transforms.RandomHorizontalFlip(p=1.0))
-        if hasattr(opt, 'test_compression') and opt.test_compression:
-            transform_list.append(JPEGCompression(opt.compression))
-        if hasattr(opt, 'test_blur') and opt.test_blur:
-            transform_list.append(Blur(opt.blur))
-        if hasattr(opt, 'test_gamma') and opt.test_gamma:
-            transform_list.append(Gamma(opt.gamma))
+        # transform_list.append(transforms.Resize(
+        #     opt.loadSize, interpolation=PIL.Image.LANCZOS))
+        # # patch discriminators have receptive field < whole image
+        # # so patch ensembling should use all patches in image
+        # transform_list.append(transforms.CenterCrop(opt.loadSize))
 
         transform_list.append(transforms.ToTensor())
 
     else:
-        transform_list.append(transforms.Resize(
-            opt.loadSize, interpolation=PIL.Image.LANCZOS))
-        transform_list.append(transforms.CenterCrop(opt.fineSize))
+        # transform_list.append(transforms.Resize(
+        #     opt.loadSize, interpolation=PIL.Image.LANCZOS))
+        # transform_list.append(transforms.CenterCrop(opt.fineSize))
 
         # transform_list.append(AllAugmentations())
 
-        # transform_list.append(transforms.ToTensor())
+        transform_list.append(transforms.ToTensor())
         # transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
         #                                         (0.229, 0.224, 0.225)))
 
