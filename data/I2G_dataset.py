@@ -57,6 +57,7 @@ def get32frames(data_list):
     orig_vid = set([x.split('_')[0] for x in data_list])
     new_data_list = []
     for vid_name in orig_vid:
+        print('process vid %s' % vid_name)
         vids = list(filter(lambda x: x.split('_')[0] == vid_name, data_list))
         vids = random.sample(vids, 32)
         new_data_list += vids
