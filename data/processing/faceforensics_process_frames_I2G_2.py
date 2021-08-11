@@ -50,7 +50,7 @@ for i, s in enumerate(tqdm(split)):
             counter += 1
             continue
         try:
-            frame_path = os.path.join(args.source_dir_original, vidname, frame)
+            frame_path = os.path.join(args.source_dir_manipulated, vidname, frame)
             orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
             frame = io.imread(frame_path)
             orig = io.imread(orig_frame_path)
