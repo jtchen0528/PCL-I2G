@@ -1,6 +1,6 @@
 partition=test
 gpu=5
-checkpoint=checkpoints/PCL-block123-DF-10lb-1e3lr
+checkpoint=checkpoints/TEST-PCL-I2G-FF128-5e-5
 which_epoch=bestval
 #dset=/scratch2/users/jtchen0528/patch-forensics-test-dataset/faces
 # dset=/scratch2/users/clairelai/patch-forensics-rp-dataset/faces
@@ -105,19 +105,3 @@ python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition 
 # 	--fake_im_path $dset/$set/1_fake \
 # 	--train_config $checkpoint/opt.yml 
 # done
-
-checkpoint=checkpoints/PCL-block123-NT-10lb-1e3lr
-
-python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
-	--average_mode after_softmax --topn 20 --force_redo \
-	--dataset_name FF-DF \
-	--real_im_path $dset/Deepfakes/original/$partition \
-	--fake_im_path $dset/Deepfakes/manipulated/$partition \
-	--train_config $checkpoint/opt.yml
-
-python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
-	--average_mode after_softmax --topn 100 --force_redo \
-	--dataset_name FF-NT \
-	--real_im_path $dset/NeuralTextures/original/$partition \
-	--fake_im_path $dset/NeuralTextures/manipulated/$partition \
-	--train_config $checkpoint/opt.yml
