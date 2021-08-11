@@ -4,7 +4,7 @@ from numpy.core.numeric import Inf
 import torch
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from data.I2G_dataset_2 import I2GDataset
+from data.I2G_dataset import I2GDataset
 from PIL import Image
 from collections import namedtuple
 

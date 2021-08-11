@@ -25,7 +25,7 @@ class PatchInconsistencyDiscriminatorModel(BaseModel):
         # specify the training losses you want to print out. 
         self.loss_names = ['loss_D']
         self.loss_names += ['acc_D_raw', 'acc_D_voted', 'acc_D_avg']
-        self.val_metric = 'acc_D_raw'
+        self.val_metric = 'acc_D_voted'
 
         # specify the images you want to save/display. 
         self.visual_names = ['fake_0', 'fake_1', 'fake_2', 'fake_3', 'fake_4',
