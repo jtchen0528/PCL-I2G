@@ -26,7 +26,7 @@ def drawLandmark(img, landmark):
     for (x, y) in landmark:
         cv2.circle(img, (int(x), int(y)), 1, (0, 0, 255), -1)
     return img
-    
+
 
 class I2GDataset(data.Dataset):
     def __init__(self, opt, dir_real, is_val=False):
@@ -73,7 +73,8 @@ class I2GDataset(data.Dataset):
         again = True
         for i, vid_name in enumerate(orig_vid):
             print("%d/%d: %s" % (i, len(orig_vid), vid_name))
-            vids = list(filter(lambda x: x.split('_')[0] == vid_name, total_frames))
+            vids = list(filter(lambda x: x.split('_')[
+                        0] == vid_name, total_frames))
             for i in range(32):
                 while again:
                     selected_frame = random.sample(vids, 1)[0]
@@ -92,7 +93,6 @@ class I2GDataset(data.Dataset):
                 again = True
         self.data_list = new_data_list
         self.landmarks_record = landmark_list
-
 
     def total_euclidean_distance(self, a, b):
         assert len(a.shape) == 2
@@ -142,7 +142,7 @@ class I2GDataset(data.Dataset):
                                                                                    maskIndices[1]] + (1 - weights[:, np.newaxis]) * dst[maskIndices[0], maskIndices[1]]
         composedMask = np.copy(dst_mask)
         composedMask[maskIndices[0], maskIndices[1]] = weights[:, np.newaxis] * src_mask[maskIndices[0], maskIndices[1]] + (
-                    1 - weights[:, np.newaxis]) * dst_mask[maskIndices[0], maskIndices[1]]
+            1 - weights[:, np.newaxis]) * dst_mask[maskIndices[0], maskIndices[1]]
 
         return composedImg, composedMask
 
@@ -245,7 +245,7 @@ class I2GDataset(data.Dataset):
 
         mask = elasticdeform.deform_random_grid(
             mask[:, :, 0], sigma=0.01, points=4)
-        mask = cv2.GaussianBlur(mask, (15, 15), 5)
+        mask = cv2.GaussianBlur(mask, (15, 15), 2)
 
         mask = np.stack((mask,)*3, axis=-1)
 
@@ -271,7 +271,8 @@ class I2GDataset(data.Dataset):
         all_candidate_path = random.sample(self.data_list, k=sample_num)
 
         # filter all frame that comes from the same video as background face
-        all_candidate_path = filter(lambda x: x.split('_')[0] != background_face_path.split('_')[0], all_candidate_path)
+        all_candidate_path = filter(lambda x: x.split(
+            '_')[0] != background_face_path.split('_')[0], all_candidate_path)
         all_candidate_path = list(all_candidate_path)
 
         # loop throungh all candidates frame to get best match
@@ -285,4 +286,3 @@ class I2GDataset(data.Dataset):
                 min_path = candidate_path
 
         return min_path
-
