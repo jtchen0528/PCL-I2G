@@ -256,7 +256,7 @@ class I2GDataset(data.Dataset):
             foreground_face, background_face, mask*255)
         blended_face = blended_face.astype(np.uint8)
 
-        mask = mask[:, :, 0:1]
+        mask = mask[:, :, 0]
 
         return blended_face, mask
 
