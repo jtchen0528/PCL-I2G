@@ -20,13 +20,12 @@ opt = {
     'loadSize': 128,
     'fineSize': 128
 }
-
 opt = Struct(**opt)
 
 dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'))
     # halves batch size since each batch returns both real and fake ims
 
-# dset.get32frames()
+dset.get32frames()
 
 dl = DataLoader(dset, batch_size=opt.batch_size,
                 num_workers=opt.nThreads, pin_memory=False,
