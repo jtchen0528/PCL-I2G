@@ -17,8 +17,8 @@ opt = {
     'real_im_path': '/scratch3/users/clairelai/faceforensics_aligned/Deepfakes/original',
     'nThreads': 4,
     'batch_size': 512,
-    'loadSize': 128,
-    'fineSize': 128
+    'loadSize': 256,
+    'fineSize': 256
 }
 opt = Struct(**opt)
 

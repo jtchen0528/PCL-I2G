@@ -140,6 +140,9 @@ class I2GDataset(data.Dataset):
 
         maskIndices = np.where(mask != 0)
 
+        src_mask = np.ones_like(mask)
+        dst_mask = np.zeros_like(mask)
+
         maskPts = np.hstack(
             (maskIndices[1][:, np.newaxis], maskIndices[0][:, np.newaxis]))
         faceSize = np.max(maskPts, axis=0) - np.min(maskPts, axis=0)
@@ -156,8 +159,11 @@ class I2GDataset(data.Dataset):
         composedImg = np.copy(dst)
         composedImg[maskIndices[0], maskIndices[1]] = weights[:, np.newaxis] * src[maskIndices[0],
                                                                                    maskIndices[1]] + (1 - weights[:, np.newaxis]) * dst[maskIndices[0], maskIndices[1]]
+        composedMask = np.copy(dst_mask)
+        composedMask[maskIndices[0], maskIndices[1]] = weights[:, np.newaxis] * src_mask[maskIndices[0], maskIndices[1]] + (
+                    1 - weights[:, np.newaxis]) * dst_mask[maskIndices[0], maskIndices[1]]
 
-        return composedImg
+        return composedImg, composedMask
 
     # borrow from https://github.com/MarekKowalski/FaceSwap
 
@@ -236,7 +242,7 @@ class I2GDataset(data.Dataset):
             background_face, foreground_face, mask*255)
 
         # blend two face
-        blended_face = self.blendImages(
+        blended_face, mask = self.blendImages(
             foreground_face, background_face, mask*255)
         blended_face = blended_face.astype(np.uint8)
 
