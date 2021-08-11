@@ -93,6 +93,7 @@ class I2GDataset(data.Dataset):
         landmark_list = {}
         again = True
         for vid_name in orig_vid:
+            print('process vid %s' % vid_name)
             vids = list(filter(lambda x: x.split('_')[0] == vid_name, total_frames))
             for i in range(32):
                 while again:
