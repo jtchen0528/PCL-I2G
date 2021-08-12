@@ -210,7 +210,7 @@ def compute_metrics(predictions, labels, save_path, threshold=0.5, plot=True):
         labels, predictions[:, 1])
     acc = metrics.accuracy_score(labels, np.argmax(predictions, axis=1))
     auc = metrics.roc_auc_score(labels, np.argmax(predictions, axis=1))
-    fpr, tpr, threshold = metrics.roc_curve(labels, np.argmax(predictions, axis=1), pos_label=1)
+    fpr, tpr, threshold = metrics.roc_curve(labels, np.argmax(predictions, axis=1))
     fnr = 1 - tpr
     eer_threshold = threshold[np.nanargmin(np.absolute((fnr - fpr)))]
     print("ap: %0.6f, acc: %0.6f, auc: %0.6f, eer: %0.6f" % (ap, acc, auc, eer_threshold))
