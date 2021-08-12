@@ -103,10 +103,10 @@ def run_eval(opt, output_dir):
                         os.path.join(output_dir, 'metrics_patch'),
                         plot=False)
 
-        print(prediction_avg_after_softmax.shape)
-        print(prediction_avg_after_softmax[0])
-        print(labels.shape)
-        print(labels[0])
+        print(len(prediction_avg_after_softmax))
+        print(prediction_avg_after_softmax[:10])
+        print(len(labels))
+        print(labels[:10])
 
         roc_auc_score(labels, prediction_avg_after_softmax)
 
