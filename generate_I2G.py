@@ -29,7 +29,7 @@ dset.get32frames()
 
 dl = DataLoader(dset, batch_size=opt.batch_size,
                 num_workers=opt.nThreads, pin_memory=False,
-                shuffle=True)
+                shuffle=False)
 total_batches = len(dl)
 os.makedirs('I2G_dataset', exist_ok=True)
 os.makedirs('I2G_dataset/real', exist_ok=True)
