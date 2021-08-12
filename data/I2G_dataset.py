@@ -247,7 +247,7 @@ class I2GDataset(data.Dataset):
 
         mask = elasticdeform.deform_random_grid(
             mask[:, :, 0], sigma=4, points=6)
-        mask = cv2.GaussianBlur(mask, (39, 39), 0)
+        mask = cv2.GaussianBlur(mask, (35, 35), 0)
 
         mask = np.stack((mask,)*3, axis=-1)
 
