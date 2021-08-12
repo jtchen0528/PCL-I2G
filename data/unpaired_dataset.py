@@ -43,8 +43,8 @@ class UnpairedMaskDataset(data.Dataset):
         # apply image transformation
         img = self.transform(img)
 
-        H, W, C = np.array(img).shape
-        print(H, W, C)
+        C, H, W = np.array(img).shape
+
         real_mask = torch.ones([H, W])
         img_mask = Image.fromarray(np.uint8(real_mask * 255) , 'L')
 
