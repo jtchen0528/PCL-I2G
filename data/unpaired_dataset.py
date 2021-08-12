@@ -28,7 +28,6 @@ class UnpairedMaskDataset(data.Dataset):
         assert(self.size > 0)
         self.transform = transforms.get_transform(opt, for_val=is_val)
         self.mask_transform = transforms.get_mask_transform(opt, for_val=is_val)
-        self.last_mask = np.ones((1, 1, 2))
         self.opt = opt
 
     def __getitem__(self, index):
@@ -45,25 +44,9 @@ class UnpairedMaskDataset(data.Dataset):
         img = self.transform(img)
 
         H, W, C = np.array(img).shape
-
-        if self.label == 0:
-            # fake_img_hull = find_face_cvhull(np.array(img))
-            # if fake_img_hull is None:
-            #     fake_img_hull = self.last_mask
-            # else:
-            #     self.last_mask = fake_img_hull
-
-            # fake_mask = np.zeros([H, W, 1])
-            # cv2.fillPoly(fake_mask, [fake_img_hull], [1])
-            # fake_mask_deformed = elasticdeform.deform_random_grid(fake_mask[:, :, 0], sigma=0.01, points=4)
-            # fake_mask_deformed_blurred = cv2.GaussianBlur(fake_mask_deformed, (15, 15), 5)
-            # fake_mask_deformed_blurred = 1 - fake_mask_deformed_blurred
-            # img_mask = Image.fromarray(np.uint8(fake_mask_deformed_blurred * 255) , 'L')
-            real_mask = torch.zeros([H, W])
-            img_mask = Image.fromarray(np.uint8(real_mask * 255) , 'L')
-        else:
-            real_mask = torch.ones([H, W])
-            img_mask = Image.fromarray(np.uint8(real_mask * 255) , 'L')
+        print(H, W, C)
+        real_mask = torch.ones([H, W])
+        img_mask = Image.fromarray(np.uint8(real_mask * 255) , 'L')
 
         img_mask = self.mask_transform(img_mask)
 
