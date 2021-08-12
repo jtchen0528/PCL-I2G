@@ -25,8 +25,8 @@ def get_transform(opt, for_val=False):
 
         transform_list.append(transforms.ToTensor())
 
-    transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
-                                            (0.229, 0.224, 0.225)))
+    # transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
+    #                                         (0.229, 0.224, 0.225)))
 
     transform = transforms.Compose(transform_list)
     print(transform)
