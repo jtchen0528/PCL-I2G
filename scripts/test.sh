@@ -1,6 +1,6 @@
 partition=test
 gpu=5
-checkpoint=checkpoints/PCL-I2G-FF128-5e-5
+checkpoint=checkpoints/PCL-I2G-FF128-32frames-Modified-5e-5
 which_epoch=bestval
 #dset=/scratch2/users/jtchen0528/patch-forensics-test-dataset/faces
 # dset=/scratch2/users/clairelai/patch-forensics-rp-dataset/faces

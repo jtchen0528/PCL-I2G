@@ -57,7 +57,15 @@ def make_dataset(dir, max_dataset_size=float("inf")):
         prefix = os.path.dirname(dir.rstrip('/')) + '/'
         for i in image_list:
             f.write('%s\n' % util.remove_prefix(i, prefix))
-    return image_list
+
+    new_data_list = []
+    orig_vid = set([x.split('/')[-1].split('_')[0] for x in image_list])
+    for i, vid_name in enumerate(orig_vid):
+        vids = list(filter(lambda x: x.split('/')[-1].split('_')[0] == vid_name, image_list))
+        selected_frame = random.sample(vids, 32)
+        new_data_list += selected_frame
+
+    return new_data_list
 
 
 def make_multiple_dataset(dir, max_dataset_size=float("inf")):
