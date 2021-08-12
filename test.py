@@ -14,6 +14,9 @@ from PIL import Image
 from IPython import embed
 import pandas as pd
 from PIL import ImageFile
+from sklearn.metrics import roc_auc_score
+
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 torch.backends.cudnn.benchmark = True
@@ -99,6 +102,13 @@ def run_eval(opt, output_dir):
         compute_metrics(patch_preds, patch_labels,
                         os.path.join(output_dir, 'metrics_patch'),
                         plot=False)
+
+        print(prediction_avg_after_softmax.shape)
+        print(prediction_avg_after_softmax[0])
+        print(labels.shape)
+        print(labels[0])
+
+        roc_auc_score(labels, prediction_avg_after_softmax)
 
         if opt.visualize:
             if opt.model == 'patch_inconsistency_discriminator':

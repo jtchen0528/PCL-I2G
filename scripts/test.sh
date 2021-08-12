@@ -38,12 +38,12 @@ python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition 
 # 	--fake_im_path $dset/FaceSwap/manipulated/$partition \
 # 	--train_config $checkpoint/opt.yml 
 
-python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
-	--average_mode after_softmax --topn 100 --force_redo \
-	--dataset_name FF-NT \
-	--real_im_path $dset/NeuralTextures/original/$partition \
-	--fake_im_path $dset/NeuralTextures/manipulated/$partition \
-	--train_config $checkpoint/opt.yml
+# python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
+# 	--average_mode after_softmax --topn 100 --force_redo \
+# 	--dataset_name FF-NT \
+# 	--real_im_path $dset/NeuralTextures/original/$partition \
+# 	--fake_im_path $dset/NeuralTextures/manipulated/$partition \
+# 	--train_config $checkpoint/opt.yml
 
 # python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
 # 	--average_mode after_softmax --topn 100 --force_redo \
