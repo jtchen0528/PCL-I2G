@@ -14,8 +14,6 @@ from PIL import Image
 from IPython import embed
 import pandas as pd
 from PIL import ImageFile
-from sklearn.metrics import roc_auc_score
-
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -102,13 +100,6 @@ def run_eval(opt, output_dir):
         compute_metrics(patch_preds, patch_labels,
                         os.path.join(output_dir, 'metrics_patch'),
                         plot=False)
-
-        print(len(prediction_avg_after_softmax))
-        print(prediction_avg_after_softmax[:10])
-        print(len(labels))
-        print(labels[:10])
-
-        roc_auc_score(labels, prediction_avg_after_softmax)
 
         if opt.visualize:
             if opt.model == 'patch_inconsistency_discriminator':
@@ -217,8 +208,10 @@ def compute_metrics(predictions, labels, save_path, threshold=0.5, plot=True):
     ap = metrics.average_precision_score(labels, predictions[:, 1])
     precision, recall, thresholds = metrics.precision_recall_curve(
         labels, predictions[:, 1])
-    print("ap: %0.6f" % ap)
     acc = metrics.accuracy_score(labels, np.argmax(predictions, axis=1))
+    auc = metrics.roc_auc_score(labels, np.argmax(predictions, axis=1))
+    print("ap: %0.6f, acc: %0.6f, auc: %0.6f" % (ap, acc, auc))
+
     np.savez(save_path + '.npz', ap=ap, precision=precision,
              recall=recall, thresholds=thresholds, acc=acc, n=len(labels))
     if plot:
