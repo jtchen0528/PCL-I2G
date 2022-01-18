@@ -1,6 +1,8 @@
 # PCL-I2G
 Unofficial implementation of paper: [Learning Self-Consistency for Deepfake Detection](https://arxiv.org/pdf/2012.09311.pdf) (ICCV2021)
 
+* Forked/Modified from [chail/patch-forensics](https://github.com/chail/patch-forensics) (Thanks!)
+
 ## Installation
 1. create conda environment with Python=3.7
     ```bash
@@ -50,8 +52,7 @@ Basically any real data works on the methodology, but here I use FaceForensics++
         --max_dataset_size 1000
     ```
 
-## Pair-Wise Self-Consistency Learning (PCL)
-
+## Pair-Wise Self-Consistency Learning (PCL)  
 ### Training
     run train_I2G.py with specific setting: 
     ```bash
