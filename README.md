@@ -60,34 +60,34 @@ Basically any real data works on the methodology, but here I use FaceForensics++
 
 ## Pair-Wise Self-Consistency Learning (PCL)  
 ### Training
-    run train_I2G.py with specific setting: 
-    ```bash
-        --which_model_net resnet34_layer4_extra3 \ 
-        --model patch_inconsistency_discriminator \ 
-        --lbda 10
-    ```
-    or run
-    ```bash
-    python train_I2G.py \
-        --gpu_ids $gpu --seed 0 --loadSize 256 --fineSize 256 \
-        --name PCL-I2G-FF256-32frames-5e-5 --save_epoch_freq 10 \
-        --real_im_path $dset \
-        --which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
-        --patience 5 --lr_policy constant --max_epochs 1000 --batch_size 512 --lr 5e-5 \
-        --overwrite_config
-    ```
-    or run bash train.sh
-    ```bash
-    bash scrips/train.sh
-    ```
+run train_I2G.py with specific setting: 
+```bash
+    --which_model_net resnet34_layer4_extra3 \ 
+    --model patch_inconsistency_discriminator \ 
+    --lbda 10
+```
+or run
+```bash
+python train_I2G.py \
+    --gpu_ids $gpu --seed 0 --loadSize 256 --fineSize 256 \
+    --name PCL-I2G-FF256-32frames-5e-5 --save_epoch_freq 10 \
+    --real_im_path $dset \
+    --which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
+    --patience 5 --lr_policy constant --max_epochs 1000 --batch_size 512 --lr 5e-5 \
+    --overwrite_config
+```
+or run train.sh
+```bash
+bash scrips/train.sh
+```
 
 ### Testing
-    run test.py
-    ```bash
-    python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
-        --average_mode after_softmax --topn 100 --force_redo \
-        --dataset_name FF-DF \
-        --real_im_path $dset/original/$partition \
-        --fake_im_path $dset/DF/$partition \
-        --train_config $checkpoint/opt.yml
-    ```
+run test.py
+```bash
+python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition \
+    --average_mode after_softmax --topn 100 --force_redo \
+    --dataset_name FF-DF \
+    --real_im_path $dset/original/$partition \
+    --fake_im_path $dset/DF/$partition \
+    --train_config $checkpoint/opt.yml
+```
