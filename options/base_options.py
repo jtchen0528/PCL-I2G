@@ -88,5 +88,6 @@ class BaseOptions(options.Options):
 
         # check both image paths are specified
         if not hasattr(opt, 'dataset_name') or opt.dataset_name != 'openmfc':
-            assert(opt.real_im_path and opt.fake_im_path)
+            if not opt.model == 'patch_inconsistency_discriminator':
+                assert(opt.real_im_path and opt.fake_im_path)
         return opt

@@ -4,17 +4,15 @@ import os
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
-import skvideo.io
 import json
 import sys
-from utils import pidfile
 import numpy as np
 from data.processing.celebahq_crop import celebahq_crop
 from skimage import io
 
 parser = argparse.ArgumentParser(description='Process and align face forensics frames')
-parser.add_argument('--source_dir_manipulated', required=True, help='source videos directory, e.g. manipulated_sequences/Deepfakes/c23/videos')
-parser.add_argument('--source_dir_original', required=True, help='source videos directory, e.g. original_sequences/youtube/c23/videos')
+parser.add_argument('--source_dir_manipulated', required=True, help='source videos directory, e.g. manipulated_sequences/Deepfakes/c23/frames')
+parser.add_argument('--source_dir_original', required=True, help='original videos directory, e.g. original_sequences/youtube/c23/frames')
 parser.add_argument('--outsize', type=int, default=128, help='resize to this size')
 parser.add_argument('--output_dir', required=True, help='output directory')
 parser.add_argument('--split', default='val.json', help='Path to split json file')
@@ -40,7 +38,7 @@ for i, s in enumerate(tqdm(split)):
     vidname = '_'.join(s)
     vidname_orig = s[0] # take target sequence for original videos
     # print("%d: %s" % (i, vidname))
-    vidpath = os.path.join(args.source_dir_manipulated, 'DF', vidname)
+    vidpath = os.path.join(args.source_dir_manipulated, 'Deepfakes', 'c23', 'frames', vidname)
     vidpath_orig = os.path.join(args.source_dir_original, vidname_orig)
 
     video_frames = os.listdir(vidpath)
@@ -52,10 +50,10 @@ for i, s in enumerate(tqdm(split)):
             # might return none or out of bounds error
                 # use original landmarks
 
-            frame_path_DF = os.path.join(args.source_dir_manipulated, 'DF', vidname, frame)
-            frame_path_F2F = os.path.join(args.source_dir_manipulated, 'F2F', vidname, frame)
-            frame_path_FS = os.path.join(args.source_dir_manipulated, 'FS', vidname, frame)
-            frame_path_NT = os.path.join(args.source_dir_manipulated, 'NT', vidname, frame)
+            frame_path_DF = os.path.join(args.source_dir_manipulated, 'Deepfakes', 'c23', 'frames', vidname, frame)
+            frame_path_F2F = os.path.join(args.source_dir_manipulated, 'Face2Face', 'c23', 'frames', vidname, frame)
+            frame_path_FS = os.path.join(args.source_dir_manipulated, 'FaceSwap', 'c23', 'frames', vidname, frame)
+            frame_path_NT = os.path.join(args.source_dir_manipulated, 'NeuralTextures', 'c23', 'frames', vidname, frame)
             orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
             frame_DF = io.imread(frame_path_DF)
             orig = io.imread(orig_frame_path)

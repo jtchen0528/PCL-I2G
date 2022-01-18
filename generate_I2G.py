@@ -5,20 +5,28 @@ import torch
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from data.I2G_dataset import I2GDataset
-from PIL import Image
-from collections import namedtuple
+import argparse
 
 class Struct:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--real_im_path", type=str, required=True, help="path of the real image")
+parser.add_argument("--batch_size", type=int, default=512, help="batch size to generate images")
+parser.add_argument("--out_size", type=int, default=256, help="image output size")
+parser.add_argument("--output_dir", type=str, required=True, help="path to store output images")
+parser.add_argument("--max_dataset_size", type=int, default=-1, help="number of images to generate (-1: Inf)")
+args = parser.parse_args()
+
 opt = {
-    'max_dataset_size': Inf,
-    'real_im_path': '/scratch3/users/clairelai/faceforensics_aligned/Deepfakes/original',
+    'max_dataset_size': args.max_dataset_size,
+    'real_im_path': args.real_im_path,
     'nThreads': 4,
-    'batch_size': 512,
-    'loadSize': 256,
-    'fineSize': 256
+    'batch_size': args.batch_size,
+    'loadSize': args.out_size,
+    'fineSize': args.out_size,
+    'output_dir': args.output_dir
 }
 opt = Struct(**opt)
 
@@ -31,13 +39,10 @@ dl = DataLoader(dset, batch_size=opt.batch_size,
                 num_workers=opt.nThreads, pin_memory=False,
                 shuffle=False)
 total_batches = len(dl)
-os.makedirs('I2G_dataset', exist_ok=True)
-os.makedirs('I2G_dataset/real', exist_ok=True)
-os.makedirs('I2G_dataset/real/face', exist_ok=True)
-os.makedirs('I2G_dataset/real/mask', exist_ok=True)
-os.makedirs('I2G_dataset/fake', exist_ok=True)
-os.makedirs('I2G_dataset/fake/face', exist_ok=True)
-os.makedirs('I2G_dataset/fake/mask', exist_ok=True)
+os.makedirs(os.path.join(opt.output_dir, 'real', 'face'), exist_ok=True)
+os.makedirs(os.path.join(opt.output_dir, 'real', 'mask'), exist_ok=True)
+os.makedirs(os.path.join(opt.output_dir, 'fake', 'face'), exist_ok=True)
+os.makedirs(os.path.join(opt.output_dir, 'fake', 'mask'), exist_ok=True)
 count = 0
 for i, ims in enumerate(dl):
     if i % 20 == 0:
@@ -46,9 +51,9 @@ for i, ims in enumerate(dl):
         img_save = transforms.ToPILImage()(ims['img'][j]).convert("RGB")
         mask_save = transforms.ToPILImage()(ims['mask'][j]).convert("L")
         if ims['label'][j] == 1:
-            img_save.save('I2G_dataset/real/face/%d.png' % count)
-            mask_save.save('I2G_dataset/real/mask/%d.png' % count)
+            img_save.save(os.path.join(opt.output_dir, 'real', 'face', '%d.png') % count)
+            mask_save.save(os.path.join(opt.output_dir, 'real', 'mask', '%d.png') % count)
         else:
-            img_save.save('I2G_dataset/fake/face/%d.png' % count)
-            mask_save.save('I2G_dataset/fake/mask/%d.png' % count)
+            img_save.save(os.path.join(opt.output_dir, 'fake', 'face', '%d.png') % count)
+            mask_save.save(os.path.join(opt.output_dir, 'fake', 'mask', '%d.png') % count)
         count += 1
