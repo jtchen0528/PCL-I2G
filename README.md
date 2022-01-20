@@ -1,6 +1,8 @@
 # PCL-I2G
 Unofficial implementation of paper: [Learning Self-Consistency for Deepfake Detection](https://arxiv.org/pdf/2012.09311.pdf) (ICCV2021)
 
+![I2G-Demo](img/I2G.png)
+
 * Forked/Modified from [chail/patch-forensics](https://github.com/chail/patch-forensics) (Thanks!)
 
 ## Installation
@@ -59,6 +61,8 @@ Basically any real data works on the methodology, but here I use FaceForensics++
     ```
 
 ## Pair-Wise Self-Consistency Learning (PCL)  
+![PCL-arch](img/PCL.png)
+
 ### Training
 run train.py: 
 ```bash
@@ -87,7 +91,13 @@ python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition 
     --train_config $checkpoint/opt.yml
 ```
 
+### Learned result on 4D consistency volume
+![PCL-Demo](img/PCL-Demo.png)
+
+
 ## XceptionNet concatenate block outputs 
+![cat-arch](img/cat.png)
+
 ### Supported Blocks:
 XceptionNet block 1, 2, 3, 5. Example:
 * --which_model_netD xception_block5_cat_extra1_extra3_extra5
