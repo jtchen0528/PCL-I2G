@@ -60,25 +60,20 @@ Basically any real data works on the methodology, but here I use FaceForensics++
 
 ## Pair-Wise Self-Consistency Learning (PCL)  
 ### Training
-run train_I2G.py with specific setting: 
+run train.py: 
 ```bash
-    --which_model_net resnet34_layer4_extra3 \ 
-    --model patch_inconsistency_discriminator \ 
-    --lbda 10
+python train.py \
+	--gpu_ids $gpu --seed 0 --loadSize 256 --fineSize 256 \
+	--name PCL-I2G-FF128-32frames-Modified-5e-5 --save_epoch_freq 10 \
+ 	--real_im_path $dset/real/face \
+ 	--fake_im_path $dset/fake/face \
+	--which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
+	--patience 5 --lr_policy constant --max_epochs 1000 --batch_size 512 --lr 5e-5 \
+	--overwrite_config
 ```
-or run
+or run train_PCL.sh
 ```bash
-python train_I2G.py \
-    --gpu_ids $gpu --seed 0 --loadSize 256 --fineSize 256 \
-    --name PCL-I2G-FF256-32frames-5e-5 --save_epoch_freq 10 \
-    --real_im_path $dset \
-    --which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
-    --patience 5 --lr_policy constant --max_epochs 1000 --batch_size 512 --lr 5e-5 \
-    --overwrite_config
-```
-or run train.sh
-```bash
-bash scrips/train.sh
+bash scrips/train_PCL.sh
 ```
 
 ### Testing
@@ -90,4 +85,34 @@ python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition 
     --real_im_path $dset/original/$partition \
     --fake_im_path $dset/DF/$partition \
     --train_config $checkpoint/opt.yml
+```
+
+## XceptionNet concatenate block outputs 
+### Supported Blocks:
+XceptionNet block 1, 2, 3, 5. Example:
+* --which_model_netD xception_block5_cat_extra1_extra3_extra5
+* --which_model_netD xception_block3_cat_extra1_extra3
+* --which_model_netD xception_block3_cat_extra1_extra2_extra3
+* --which_model_netD xception_block2_cat_extra1_extra2
+
+### Input image Size:
+299x299
+
+### Training
+run train.py: 
+```bash
+python train.py \
+	--gpu_ids $gpu --seed 0 --loadSize 299 --fineSize 299 \
+	--name Xception135_cat-FF-DF-s299-b512-lr5e5 --save_epoch_freq 3 \
+ 	--real_im_path $dset/original \
+ 	--fake_im_path $dset/DF \
+	--which_model_netD xception_block5_cat_extra1_extra3_extra5 \
+	--model patch_discriminator_cat \
+	--patience 3 --lr_policy constant --max_epochs 3 \
+	--batch_size 32 --lr 5e-5 \
+	--overwrite_config
+```
+or run train_cat.sh
+```bash
+bash scrips/train_cat.sh
 ```

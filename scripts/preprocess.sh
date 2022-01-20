@@ -1,8 +1,8 @@
 ### Dataset processing ###
-$manipulated=/scratch2/users/jtchen0528/Datasets/FaceForensics++_redownload/manipulated_sequences/
-$original=/scratch2/users/jtchen0528/Datasets/FaceForensics++_redownload/original_sequences/youtube/c23/frames
-$out=/scratch2/users/jtchen0528/Datasets/PatchForensics
-$outsize=256
+manipulated=/scratch2/users/jtchen0528/Datasets/FaceForensics++_redownload/manipulated_sequences/
+original=/scratch2/users/jtchen0528/Datasets/FaceForensics++_redownload/original_sequences/youtube/c23/frames
+out=/scratch2/users/jtchen0528/Datasets/PatchForensics
+outsize=256
 
 python -m data.processing.faceforensics_process_frames \
 	--source_dir_manipulated $manipulated \

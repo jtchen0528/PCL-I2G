@@ -38,63 +38,62 @@ for i, s in enumerate(tqdm(split)):
     vidname = '_'.join(s)
     vidname_orig = s[0] # take target sequence for original videos
     # print("%d: %s" % (i, vidname))
-    vidpath = os.path.join(args.source_dir_manipulated, 'Deepfakes', 'c23', 'frames', vidname)
     vidpath_orig = os.path.join(args.source_dir_original, vidname_orig)
 
-    video_frames = os.listdir(vidpath)
-    original_video_frames = os.listdir(vidpath_orig)
+    if os.path.isdir(vidpath_orig):
+        original_video_frames = os.listdir(vidpath_orig)
 
-    counter = 0
-    for j, (frame, orig) in enumerate(zip(video_frames, original_video_frames)):
-        try:
-            # might return none or out of bounds error
-                # use original landmarks
+        counter = 0
+        for j, (orig) in enumerate(original_video_frames):
+            try:
+                # might return none or out of bounds error
+                    # use original landmarks
 
-            frame_path_DF = os.path.join(args.source_dir_manipulated, 'Deepfakes', 'c23', 'frames', vidname, frame)
-            frame_path_F2F = os.path.join(args.source_dir_manipulated, 'Face2Face', 'c23', 'frames', vidname, frame)
-            frame_path_FS = os.path.join(args.source_dir_manipulated, 'FaceSwap', 'c23', 'frames', vidname, frame)
-            frame_path_NT = os.path.join(args.source_dir_manipulated, 'NeuralTextures', 'c23', 'frames', vidname, frame)
-            orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
-            frame_DF = io.imread(frame_path_DF)
-            orig = io.imread(orig_frame_path)
-            cropped_orig, landmarks = celebahq_crop(orig)
-            cropped_orig = cropped_orig.resize((args.outsize, args.outsize), Image.LANCZOS)
-            if isfile(frame_path_F2F):
-                frame_F2F = io.imread(frame_path_F2F)
-                cropped_F2F = (celebahq_crop(frame_F2F, landmarks)[0]
+                frame_path_DF = os.path.join(args.source_dir_manipulated, 'Deepfakes', 'c23', 'frames', vidname, orig)
+                frame_path_F2F = os.path.join(args.source_dir_manipulated, 'Face2Face', 'c23', 'frames', vidname, orig)
+                frame_path_FS = os.path.join(args.source_dir_manipulated, 'FaceSwap', 'c23', 'frames', vidname, orig)
+                frame_path_NT = os.path.join(args.source_dir_manipulated, 'NeuralTextures', 'c23', 'frames', vidname, orig)
+                orig_frame_path = os.path.join(args.source_dir_original, vidname_orig, orig)
+                frame_DF = io.imread(frame_path_DF)
+                orig = io.imread(orig_frame_path)
+                cropped_orig, landmarks = celebahq_crop(orig)
+                cropped_orig = cropped_orig.resize((args.outsize, args.outsize), Image.LANCZOS)
+                if isfile(frame_path_F2F):
+                    frame_F2F = io.imread(frame_path_F2F)
+                    cropped_F2F = (celebahq_crop(frame_F2F, landmarks)[0]
+                                .resize((args.outsize, args.outsize), Image.LANCZOS))
+                    cropped_F2F.save(os.path.join(outdir, 'F2F', split_name,
+                                            '%s_%03d.png' % (vidname, j)))
+                if isfile(frame_path_FS):
+                    frame_FS = io.imread(frame_path_FS)
+                    cropped_FS = (celebahq_crop(frame_FS, landmarks)[0]
+                                .resize((args.outsize, args.outsize), Image.LANCZOS))
+                    cropped_FS.save(os.path.join(outdir, 'FS', split_name,
+                                            '%s_%03d.png' % (vidname, j)))
+                if isfile(frame_path_NT):
+                    frame_NT = io.imread(frame_path_NT)
+                    cropped_NT = (celebahq_crop(frame_NT, landmarks)[0]
+                                .resize((args.outsize, args.outsize), Image.LANCZOS))
+                    cropped_NT.save(os.path.join(outdir, 'NT', split_name,
+                                            '%s_%03d.png' % (vidname, j)))
+                cropped_DF = (celebahq_crop(frame_DF, landmarks)[0]
                             .resize((args.outsize, args.outsize), Image.LANCZOS))
-                cropped_F2F.save(os.path.join(outdir, 'F2F', split_name,
-                                        '%s_%03d.png' % (vidname, j)))
-            if isfile(frame_path_FS):
-                frame_FS = io.imread(frame_path_FS)
-                cropped_FS = (celebahq_crop(frame_FS, landmarks)[0]
-                            .resize((args.outsize, args.outsize), Image.LANCZOS))
-                cropped_FS.save(os.path.join(outdir, 'FS', split_name,
-                                        '%s_%03d.png' % (vidname, j)))
-            if isfile(frame_path_NT):
-                frame_NT = io.imread(frame_path_NT)
-                cropped_NT = (celebahq_crop(frame_NT, landmarks)[0]
-                            .resize((args.outsize, args.outsize), Image.LANCZOS))
-                cropped_NT.save(os.path.join(outdir, 'NT', split_name,
-                                        '%s_%03d.png' % (vidname, j)))
-            cropped_DF = (celebahq_crop(frame_DF, landmarks)[0]
-                        .resize((args.outsize, args.outsize), Image.LANCZOS))
 
-            # save the results
-            cropped_DF.save(os.path.join(outdir, 'DF', split_name,
-                                      '%s_%03d.png' % (vidname, j)))
+                # save the results
+                cropped_DF.save(os.path.join(outdir, 'DF', split_name,
+                                        '%s_%03d.png' % (vidname, j)))
 
-            cropped_orig.save(os.path.join(outdir, 'original', split_name,
-                                           '%s_%03d.png' % (vidname, j)))
-            # np.savez(os.path.join(outdir, 'detections', split_name,
-            #                       '%s_%03d.npz' % (vidname, j)),
-            #          lm=landmarks)
-            counter += 1
+                cropped_orig.save(os.path.join(outdir, 'original', split_name,
+                                            '%s_%03d.png' % (vidname, j)))
+                # np.savez(os.path.join(outdir, 'detections', split_name,
+                #                       '%s_%03d.npz' % (vidname, j)),
+                #          lm=landmarks)
+                counter += 1
 
-            # for val/test partitions, just take 100 detected frames per video
-            if counter == 100 and split_name in ['test', 'val']:
-                print("Processed 100 frames of %s" % vidname)
-                print("Moving to next video")
-                break
-        except:
-            print("Error:", sys.exc_info()[0])
+                # for val/test partitions, just take 100 detected frames per video
+                if counter == 100 and split_name in ['test', 'val']:
+                    print("Processed 100 frames of %s" % vidname)
+                    print("Moving to next video")
+                    break
+            except:
+                print("Error:", sys.exc_info()[0])

@@ -29,7 +29,7 @@ def drawLandmark(img, landmark):
 
 
 class I2GDataset(data.Dataset):
-    def __init__(self, opt, dir_real, is_val=False):
+    def __init__(self, opt, dir_real, is_val=False, orig_transform=False):
         self.dir_real = dir_real
 
         self.landmarks_record = []
@@ -40,10 +40,15 @@ class I2GDataset(data.Dataset):
         self.blender = Blender(
             ldmPath=None, dataPath=None, topk=100, selectNum=1, gaussianKernel=[31, 63], gaussianSigma=[7, 15], loader='cv', pixel_aug=None, spatial_aug=None
         )
-        self.transform = transforms.get_transform(opt, for_val=is_val)
+        if orig_transform:
+            self.transform = transforms.get_mask_transform(opt, for_val=is_val)
+        else:
+            self.transform = transforms.get_transform(opt, for_val=is_val)
         self.mask_transform = transforms.get_mask_transform(
             opt, for_val=is_val)
         self.opt = opt
+
+        self.last_type = 'fake'
 
     def __len__(self):
         return len(self.data_list)
@@ -192,7 +197,8 @@ class I2GDataset(data.Dataset):
 
     def gen_datapoint_from(self, background_face_path, size):
         # background_face_path = random.choice(self.data_list)
-        data_type = 'real' if random.randint(0, 1) else 'fake'
+        data_type = 'real' if self.last_type == 'fake' else 'fake'
+        self.last_type = data_type
         if data_type == 'fake':
             face_img, mask = self.get_blended_face(background_face_path, size)
             face_img = Image.fromarray(face_img)
