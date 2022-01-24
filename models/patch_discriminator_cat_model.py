@@ -55,42 +55,66 @@ class PatchDiscriminatorCatModel(BaseModel):
         self.softmax = torch.nn.Softmax(dim=1)
 
         for block in opt.which_model_netD.split('_')[3:]:
-            if block == 'extra1':
-                self.model_names += ['e1']
-                # convolution layer for block1 (128, 74, 74) to match the size of block5
-                if opt.which_model_netD.split('_')[1] == 'block2':
+            if opt.which_model_netD.startswith('xception'):
+                if block == 'extra1':
+                    self.model_names += ['e1']
+                    # convolution layer for block1 (128, 74, 74) to match the size of block5
+                    if opt.which_model_netD.split('_')[1] == 'block2':
+                        tmp = nn.Conv2d(128, 2, kernel_size=3, stride=2, padding=1)
+                    else:
+                        tmp = nn.Conv2d(128, 2, kernel_size=5, stride=4, padding=3)
+                    self.net_e1 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b1")
+                    # b1
+                elif block == 'extra2':
+                    self.model_names += ['e2']
+                    # convolution layer for block1 (256, n, n) to match the size of block5
+                    tmp = nn.Conv2d(256, 2, kernel_size=3, stride=2, padding=1)
+                    self.net_e2 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b2")
+                    # b2
+                elif block == 'extra3':
+                    self.model_names += ['e3']
+                    # convolution layer for block3 (728, 19, 19) to match the size of block5
+                    tmp = nn.Conv2d(728, 2, kernel_size=1)
+                    self.net_e3 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b3")
+                    # b3
+                elif block == 'extra5':
+                    self.model_names += ['e5']
+                    # convolution layer for block5 (728, 19, 19) to match the size of block5
+                    tmp = nn.Conv2d(728, 2, kernel_size=1)
+                    self.net_e5 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b5")
+                    # b3
+            elif opt.which_model_netD.startswith('resnet'):
+                if block == 'extra1':
+                    self.model_names += ['e1']
                     tmp = nn.Conv2d(128, 2, kernel_size=3, stride=2, padding=1)
-                else:
-                    tmp = nn.Conv2d(128, 2, kernel_size=5, stride=4, padding=3)
-                self.net_e1 = netutils.init_net(
-                    tmp, opt.init_type, self.gpu_ids)
-                print("b1")
-                # b1
-            elif block == 'extra2':
-                self.model_names += ['e2']
-                # convolution layer for block1 (256, n, n) to match the size of block5
-                tmp = nn.Conv2d(256, 2, kernel_size=3, stride=2, padding=1)
-                self.net_e2 = netutils.init_net(
-                    tmp, opt.init_type, self.gpu_ids)
-                print("b2")
-                # b2
-            elif block == 'extra3':
-                self.model_names += ['e3']
-                # convolution layer for block3 (728, 19, 19) to match the size of block5
-                tmp = nn.Conv2d(728, 2, kernel_size=1)
-                self.net_e3 = netutils.init_net(
-                    tmp, opt.init_type, self.gpu_ids)
-                print("b3")
-                # b3
-            elif block == 'extra5':
-                self.model_names += ['e5']
-                # convolution layer for block5 (728, 19, 19) to match the size of block5
-                tmp = nn.Conv2d(728, 2, kernel_size=1)
-                self.net_e5 = netutils.init_net(
-                    tmp, opt.init_type, self.gpu_ids)
-                print("b5")
-                # b3
-
+                    self.net_e1 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b1")
+                    # b1
+                elif block == 'extra2':
+                    self.model_names += ['e2']
+                    # convolution layer for block1 (256, n, n) to match the size of block5
+                    tmp = nn.Conv2d(64, 2, kernel_size=3, stride=2, padding=1)
+                    self.net_e2 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b2")
+                    # b2
+                elif block == 'extra3':
+                    self.model_names += ['e3']
+                    # convolution layer for block3 (728, 19, 19) to match the size of block5
+                    tmp = nn.Conv2d(64, 2, kernel_size=1)
+                    self.net_e3 = netutils.init_net(
+                        tmp, opt.init_type, self.gpu_ids)
+                    print("b3")
+                    # b3
 
         blocknum = (len(self.model_names) - 2 + 1) * 2
 
@@ -132,13 +156,6 @@ class PatchDiscriminatorCatModel(BaseModel):
     def set_input(self, input):
         self.ims = input['ims'].to(self.device)
         self.labels = input['labels'].to(self.device)
-
-    def forward_D(self):
-        # N = batch size
-        # outp(2, 19, 19), b1(128, 74, 74), b2(256, 37, 37), b3(728, 19, 19)
-        outputs = self.net_D(self.ims)
-        D_output = self.net_D_output(outputs[0])
-        self.pred_logit = D_output
 
     def forward_all(self):
         # N = batch size
@@ -230,24 +247,6 @@ class PatchDiscriminatorCatModel(BaseModel):
         self.backward_D()
         for block_name in self.model_names:
             self.optimizers[block_name].step()
-
-    def optimize_parameters_D(self):
-        self.optimizers['D'].zero_grad()
-        self.optimizers['D_output'].zero_grad()
-        self.forward_D()
-        self.backward_D()
-        self.optimizers['D'].step()
-        self.optimizers['D_output'].step()
-
-    def optimize_parameters_not_D(self):
-        for block_name in self.model_names:
-            if block_name != 'D':
-                self.optimizers[block_name].zero_grad()
-        self.forward_all()
-        self.backward_D()
-        for block_name in self.model_names:
-            if block_name != 'D':
-                self.optimizers[block_name].step()
 
     def get_current_visuals(self):
         from collections import OrderedDict

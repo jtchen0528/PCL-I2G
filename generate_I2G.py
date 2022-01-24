@@ -29,7 +29,7 @@ opt = {
 }
 opt = Struct(**opt)
 
-dset = I2GDataset(opt, os.path.join(opt.real_im_path, 'train'), orig_transform=True)
+dset = I2GDataset(opt, os.path.join(opt.real_im_path), orig_transform=True)
     # halves batch size since each batch returns both real and fake ims
 
 dset.get32frames()
@@ -44,19 +44,26 @@ os.makedirs(os.path.join(opt.output_dir, 'fake', 'face'), exist_ok=True)
 os.makedirs(os.path.join(opt.output_dir, 'fake', 'mask'), exist_ok=True)
 count_real = 0
 count_fake = 0
-for i, ims in enumerate(dl):
-    if i % 20 == 0:
-        print('finished: {}/{}%'.format(i, total_batches))
-    for j in range(len(ims['img'])):
-        img_save = transforms.ToPILImage()(ims['img'][j]).convert("RGB")
-        mask_save = transforms.ToPILImage()(ims['mask'][j]).convert("L")
-        if ims['label'][j] == 1:
-            img_save.save(os.path.join(opt.output_dir, 'real', 'face', '%d.png') % count_real)
-            mask_save.save(os.path.join(opt.output_dir, 'real', 'mask', '%d.png') % count_real)
-            count_real += 1
-        else:
-            img_save.save(os.path.join(opt.output_dir, 'fake', 'face', '%d.png') % count_fake)
-            mask_save.save(os.path.join(opt.output_dir, 'fake', 'mask', '%d.png') % count_fake)
-            count_fake += 1
-    # if count_real >= 100:
-    #     sys.exit('exit')
+if count_real <= 140000:
+    for i, ims in enumerate(dl):
+        if i % 20 == 0:
+            print('finished: {}/{}%'.format(i, total_batches))
+        for j in range(len(ims['img'])):
+            img_save = transforms.ToPILImage()(ims['img'][j]).convert("RGB")
+            mask_save = transforms.ToPILImage()(ims['mask'][j]).convert("L")
+            if ims['label'][j] == 1:
+                img_save.save(os.path.join(opt.output_dir, 'real', 'face', '%d.png') % count_real)
+                mask_save.save(os.path.join(opt.output_dir, 'real', 'mask', '%d.png') % count_real)
+                count_real += 1
+            else:
+                img_save.save(os.path.join(opt.output_dir, 'fake', 'face', '%d.png') % count_fake)
+                mask_save.save(os.path.join(opt.output_dir, 'fake', 'mask', '%d.png') % count_fake)
+                count_fake += 1
+        # if count_real >= 100:
+        #     sys.exit('exit')
+    dset.get32frames()
+    dl = DataLoader(dset, batch_size=opt.batch_size,
+                    num_workers=opt.nThreads, pin_memory=False,
+                    shuffle=True)
+else:
+    sys.exit('exit')

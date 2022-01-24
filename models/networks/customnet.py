@@ -29,6 +29,7 @@ def make_patch_resnet(depth, layername, num_classes=2, extra_output=None):
     if (extra_output == None):
         model = CustomResNet(depth, modify_sequence=change_out)
     else:
+        print(extra_output)
         model = CustomResNet(depth, modify_sequence=change_out, extra_output=extra_output)
     return model
 
