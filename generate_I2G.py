@@ -29,25 +29,24 @@ opt = {
 }
 opt = Struct(**opt)
 
-dset = I2GDataset(opt, os.path.join(opt.real_im_path), orig_transform=True)
-    # halves batch size since each batch returns both real and fake ims
-
-dset.get32frames()
-
-dl = DataLoader(dset, batch_size=opt.batch_size,
-                num_workers=opt.nThreads, pin_memory=False,
-                shuffle=False)
-total_batches = len(dl)
 os.makedirs(os.path.join(opt.output_dir, 'real', 'face'), exist_ok=True)
 os.makedirs(os.path.join(opt.output_dir, 'real', 'mask'), exist_ok=True)
 os.makedirs(os.path.join(opt.output_dir, 'fake', 'face'), exist_ok=True)
 os.makedirs(os.path.join(opt.output_dir, 'fake', 'mask'), exist_ok=True)
 count_real = 0
 count_fake = 0
-if count_real <= 140000:
+
+while count_real <= 140000 or count_fake <= 140000:
+    dset = I2GDataset(opt, os.path.join(opt.real_im_path), orig_transform=True)
+    dset.get32frames()
+    dl = DataLoader(dset, batch_size=opt.batch_size,
+                    num_workers=opt.nThreads, pin_memory=False,
+                    shuffle=False)
+    total_batches = len(dl)
+    print(total_batches)
     for i, ims in enumerate(dl):
         if i % 20 == 0:
-            print('finished: {}/{}%'.format(i, total_batches))
+            print('finished: {}/{}'.format(i, total_batches))
         for j in range(len(ims['img'])):
             img_save = transforms.ToPILImage()(ims['img'][j]).convert("RGB")
             mask_save = transforms.ToPILImage()(ims['mask'][j]).convert("L")
@@ -61,9 +60,3 @@ if count_real <= 140000:
                 count_fake += 1
         # if count_real >= 100:
         #     sys.exit('exit')
-    dset.get32frames()
-    dl = DataLoader(dset, batch_size=opt.batch_size,
-                    num_workers=opt.nThreads, pin_memory=False,
-                    shuffle=True)
-else:
-    sys.exit('exit')

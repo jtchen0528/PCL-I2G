@@ -30,3 +30,4 @@ website/
 
 logs/
 scripts/
+/__pycache__

@@ -1,7 +1,7 @@
 ### celebahq-pgan raw samples from the gan vs real images ###
 ### uses --no_serial_batches as samples are not paired ### 
 dset=/scratch2/users/jtchen0528/Datasets/PatchForensics
-gpu=5
+gpu=6
 
 python train.py \
 	--gpu_ids $gpu --seed 0 --loadSize 299 --fineSize 299 \

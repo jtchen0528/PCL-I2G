@@ -39,9 +39,6 @@ def make_dataset(dir, max_dataset_size=float("inf")):
             prefix = os.path.dirname(dir.rstrip('/'))
             for image in images:
                 image_list.append(os.path.join(prefix, image))
-        image_list = image_list[:min(max_dataset_size, len(image_list))]
-        # image_list = random.sample(image_list, min(
-        #     max_dataset_size, len(image_list)))
         return image_list
     print("Walking directory ...")
     images = []
@@ -52,20 +49,11 @@ def make_dataset(dir, max_dataset_size=float("inf")):
                 path = os.path.join(root, fname)
                 images.append(path)
     image_list = images[:min(max_dataset_size, len(images))]
-    # image_list = random.sample(images, min(max_dataset_size, len(images)))
     with open(cache, 'w') as f:
         prefix = os.path.dirname(dir.rstrip('/')) + '/'
         for i in image_list:
             f.write('%s\n' % util.remove_prefix(i, prefix))
-
-    new_data_list = []
-    orig_vid = set([x.split('/')[-1].split('_')[0] for x in image_list])
-    for i, vid_name in enumerate(orig_vid):
-        vids = list(filter(lambda x: x.split('/')[-1].split('_')[0] == vid_name, image_list))
-        selected_frame = random.sample(vids, 32)
-        new_data_list += selected_frame
-
-    return new_data_list
+    return image_list
 
 
 def make_multiple_dataset(dir, max_dataset_size=float("inf")):
