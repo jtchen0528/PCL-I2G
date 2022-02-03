@@ -8,6 +8,7 @@ from utils import util
 from utils import imutil
 from torch.utils.data import DataLoader
 from data.unpaired_dataset import UnpairedMaskDataset
+from data.paired_dataset import PairedDataset
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -38,23 +39,23 @@ def run_eval(opt, output_dir):
 
     for data_path, label in zip([opt.real_im_path, opt.fake_im_path],
                                 [real_label, fake_label]):
-        dset = UnpairedMaskDataset(opt, data_path, label, is_val=True)
-        dl = DataLoader(dset, batch_size=opt.batch_size, shuffle=False,
+
+        dset = PairedDataset(opt, os.path.join(opt.real_im_path),
+                            os.path.join(opt.fake_im_path), with_mask=False, is_val=True)
+    
+        dl = DataLoader(dset, batch_size=opt.batch_size // 2, shuffle=False,
                         num_workers=opt.nThreads, pin_memory=False)
 
         for i, data in enumerate(dl):
+            ims_real = data['original'].to(opt.gpu_ids[0])
+            ims_fake = data['manipulated'].to(opt.gpu_ids[0])
+            labels_real = real_label * torch.ones(ims_real.shape[0], dtype=torch.long).to(opt.gpu_ids[0])
+            labels_fake = fake_label * torch.ones(ims_fake.shape[0], dtype=torch.long).to(opt.gpu_ids[0])
+            pred_labels = torch.cat((labels_real, labels_fake), axis=0)
+
             # set model inputs
-            if opt.model == 'patch_inconsistency_discriminator':
-                ims = data['img'].to(opt.gpu_ids[0])
-                mks = data['mask'].to(opt.gpu_ids[0])
-                pred_labels = (torch.ones(ims.shape[0], dtype=torch.long)
-                            * label).to(opt.gpu_ids[0])
-                inputs = dict(ims=ims, masks=mks, labels=pred_labels)
-            else:
-                ims = data['img'].to(opt.gpu_ids[0])
-                pred_labels = (torch.ones(ims.shape[0], dtype=torch.long)
-                            * label).to(opt.gpu_ids[0])
-                inputs = dict(ims=ims, labels=pred_labels)
+            inputs = dict(ims=torch.cat((ims_real, ims_fake), axis=0),
+                        labels=pred_labels)
 
             # forward pass
             model.reset()
@@ -68,8 +69,10 @@ def run_eval(opt, output_dir):
             prediction_avg_before_softmax.append(predictions.before_softmax)
             prediction_avg_after_softmax.append(predictions.after_softmax)
             prediction_raw.append(predictions.raw)
-            prediction_mask.append(predictions.mask)
-            paths.extend(data['path'])
+            if opt.model == 'patch_inconsistency_discriminator':
+                prediction_mask.append(predictions.mask)
+            # paths.extend(data['path'])
+
 
     # compute and save metrics
     if opt.model.split('_')[0] == 'patch':
