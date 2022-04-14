@@ -8,7 +8,7 @@ import os
 import random
 from PIL import Image
 from imgaug import augmenters as iaa
-from .processing.DeepFakeMask import dfl_full, facehull, components, extended
+from .processing.DeepFakeMask import dfl_full, facehull, components, extended, random_components
 import cv2
 import pickle
 import tqdm
@@ -104,24 +104,30 @@ class I2GDataset(data.Dataset):
         return np.sum(np.linalg.norm(a-b, axis=1))
 
     def random_get_hull(self, landmark, img1):
-        hull_type = random.choice([0, 1, 2, 3])
-        hull_type = 3
-        
-        if hull_type == 0:
-            mask = dfl_full(landmarks=landmark.astype(
-                'int32'), face=img1, channels=3).mask
-            return mask/255
-        elif hull_type == 1:
-            mask = extended(landmarks=landmark.astype(
-                'int32'), face=img1, channels=3).mask
-            return mask/255
-        elif hull_type == 2:
-            mask = components(landmarks=landmark.astype(
-                'int32'), face=img1, channels=3).mask
-            return mask/255
-        elif hull_type == 3:
-            mask = facehull(landmarks=landmark.astype(
-                'int32'), face=img1, channels=3).mask
+        random_or_not = random.choice([0, 1])
+        if random_or_not == 0:
+            hull_type = random.choice([0, 1, 2, 3])
+            hull_type = 3
+            
+            if hull_type == 0:
+                mask = dfl_full(landmarks=landmark.astype(
+                    'int32'), face=img1, channels=3).mask
+                return mask/255
+            elif hull_type == 1:
+                mask = extended(landmarks=landmark.astype(
+                    'int32'), face=img1, channels=3).mask
+                return mask/255
+            elif hull_type == 2:
+                mask = components(landmarks=landmark.astype(
+                    'int32'), face=img1, channels=3).mask
+                return mask/255
+            elif hull_type == 3:
+                mask = facehull(landmarks=landmark.astype(
+                    'int32'), face=img1, channels=3).mask
+                return mask/255
+        else:
+            mask = random_components(landmarks=landmark.astype(
+                    'int32'), face=img1, channels=3).mask
             return mask/255
 
     def blendImages(self, src, dst, mask, featherAmount=0.2):
