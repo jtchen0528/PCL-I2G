@@ -32,8 +32,8 @@ Basically any real data works on the methodology, but here I use FaceForensics++
 2. Download dlib landmark predictor
     ```bash
     # dlib facial landmarks predictor
-    wget https://github.com/davisking/dlib-models/raw/master/shape_predictor_68_face_landmarks.dat.bz2
-    bzip2 -d shape_predictor_68_face_landmarks.dat.bz2
+    wget -O resources/shape_predictor_68_face_landmarks.dat.bz2 https://github.com/davisking/dlib-models/raw/master/shape_predictor_68_face_landmarks.dat.bz2
+    bzip2 -d resources/shape_predictor_68_face_landmarks.dat.bz2
     ```
 3. run data/preprocessing/faceforensics_process_frames.py
     ```bash
@@ -73,14 +73,17 @@ python train.py \
 	--name PCL-I2G-FF256-32frames-Modified-5e-5 --save_epoch_freq 10 \
  	--real_im_path $dset/real/face \
  	--fake_im_path $dset/fake/face \
-	--which_model_netD resnet34_layer4_extra3 --model patch_inconsistency_discriminator --lbda 10 \
-	--patience 5 --lr_policy constant --max_epochs 500 --batch_size 512 --lr 5e-5 \
+	--which_model_netD resnet34_layer4_extra3 \
+    --model patch_inconsistency_discriminator \
+	--lbda 10 --patience 5 --lr_policy constant \
+    --max_epochs 500 --batch_size 512 --lr 5e-5 \
 	--overwrite_config
 ```
 or run train_PCL.sh
 ```bash
 bash scrips/train_PCL.sh
 ```
+Argument `--which_model_netD resnet34_layer4_extra3` and `--model patch_inconsistency_discriminator` is the model architecture used in the paper.
 
 ### Testing
 run test.py
@@ -102,30 +105,32 @@ python test.py --which_epoch $which_epoch --gpu_ids $gpu --partition $partition 
 
 ### Supported Blocks:
 XceptionNet block 1, 2, 3, 5 with image size 299. Example:
-* --which_model_netD xception_block5_cat_extra1_extra3_extra5  
-* --which_model_netD xception_block3_cat_extra1_extra3  
-* --which_model_netD xception_block3_cat_extra1_extra2_extra3  
-* --which_model_netD xception_block2_cat_extra1_extra2  
+* cat135 `--which_model_netD xception_block5_cat_extra1_extra3_extra5`  
+* cat13 `--which_model_netD xception_block3_cat_extra1_extra3`  
+* cat123 `--which_model_netD xception_block3_cat_extra1_extra2_extra3`  
+* cat12 `--which_model_netD xception_block2_cat_extra1_extra2`  
 
 ResNet34 block 1, 2, 3, 4 with image size 256. Example:
-* --which_model_netD resnet34_layer3_extra1_extra2
-* --which_model_netD resnet34_layer4_extra1_extra2_extra3
-* --which_model_netD resnet34_layer2_extra1
+* cat123 `--which_model_netD resnet34_layer3_extra1_extra2`  
+* cat1234 `--which_model_netD resnet34_layer4_extra1_extra2_extra3`  
+* cat12 `--which_model_netD resnet34_layer2_extra1`  
 
 ### Input image Size:
-299x299 for XceptionNet and 256x256 for ResNet34
+299x299 for XceptionNet and 256x256 for ResNet34 (specific image size due to fixed model dimensions)
 
 ### Training
 run train.py: 
 ```bash
 python train.py \
 	--gpu_ids $gpu --seed 0 --loadSize 299 --fineSize 299 \
-	--name Xception135_cat-FF-DF-s299-b512-lr5e5 --save_epoch_freq 5 \
+	--name Xception135_cat-FF-DF-s299-b512-lr5e5 \
+    --save_epoch_freq 5 \
  	--real_im_path $dset/original \
  	--fake_im_path $dset/DF \
 	--which_model_netD xception_block5_cat_extra1_extra3_extra5 \
 	--model patch_discriminator_cat \
-	--patience 5 --lr_policy constant --max_epochs 200 \
+	--patience 5 --lr_policy constant \
+    --max_epochs 200 \
 	--batch_size 128 --lr 5e-5 \
 	--overwrite_config
 ```
@@ -139,17 +144,20 @@ bash scrips/train_cat.sh
 
 ### Supported Blocks:
 XceptionNet block 2 with 299x299. Example:
-* --which_model_netD xception_block2_extra2
+* `--which_model_netD xception_block2_extra2`
 
 ### Training
 run train.py: 
 ```bash
 python train.py \
 	--gpu_ids $gpu --seed 0 --loadSize 299 --fineSize 299 \
-	--name PCL-I2G-FF128-32frames-Modified-5e-5 --save_epoch_freq 10 \
+	--name PCL-I2G-FF128-32frames-Modified-5e-5 \
+    --save_epoch_freq 10 \
  	--real_im_path $dset/original \
  	--fake_im_path $dset/DF \
-	--which_model_netD xception_block2_extra2 --model patch_discriminator_multihead_selfattention --lbda 10 \
-	--patience 5 --lr_policy constant --max_epochs 200 --batch_size 128 --lr 5e-5 \
+	--which_model_netD xception_block2_extra2 \
+    --model patch_discriminator_multihead_selfattention \
+	--lbda 10  --patience 5 --lr_policy constant \
+    --max_epochs 200 --batch_size 128 --lr 5e-5 \
 	--overwrite_config
 ```

@@ -17,6 +17,7 @@ parser.add_argument("--real_im_path", type=str, required=True, help="path of the
 parser.add_argument("--batch_size", type=int, default=512, help="batch size to generate images")
 parser.add_argument("--out_size", type=int, default=256, help="image output size")
 parser.add_argument("--output_dir", type=str, required=True, help="path to store output images")
+parser.add_argument("--output_max", type=int, default=140000, help="max output image number")
 args = parser.parse_args()
 
 opt = {
@@ -36,7 +37,7 @@ os.makedirs(os.path.join(opt.output_dir, 'fake', 'mask'), exist_ok=True)
 count_real = 0
 count_fake = 0
 
-while count_real <= 140000 or count_fake <= 140000:
+while count_real <= args.output_max or count_fake <= args.output_max:
     dset = I2GDataset(opt, os.path.join(opt.real_im_path), orig_transform=True)
     dset.get32frames()
     dl = DataLoader(dset, batch_size=opt.batch_size,
