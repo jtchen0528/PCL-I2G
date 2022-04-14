@@ -28,6 +28,9 @@ def get_transform(opt, for_val=False):
     transform_list.append(transforms.Normalize((0.485, 0.456, 0.406),
                                             (0.229, 0.224, 0.225)))
 
+    if not for_val:
+        transform_list.append(transforms.RandomErasing())
+
     transform = transforms.Compose(transform_list)
     print(transform)
     logging.info(transform)
@@ -52,8 +55,9 @@ class AllAugmentations(object):
             albumentations.Blur(blur_limit=3),
             albumentations.JpegCompression(quality_lower=30, quality_upper=100, p=0.5),
             albumentations.RandomBrightnessContrast(),
-            albumentations.RandomGamma(gamma_limit=(80, 120)),
-            albumentations.CLAHE(),
+            albumentations.augmentations.transforms.ColorJitter(),
+            # albumentations.RandomGamma(gamma_limit=(80, 120)),
+            # albumentations.CLAHE(),
         ])
 
     def __call__(self, image):

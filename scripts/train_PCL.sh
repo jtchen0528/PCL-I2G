@@ -5,11 +5,11 @@ gpu=7
 
 python train.py \
 	--gpu_ids $gpu --seed 0 --loadSize 256 --fineSize 256 \
-	--name PCL-I2G-FF256-32frames-Modified-5e-5 --save_epoch_freq 10 \
+	--name PCL-I2G-FF256-32frames-Modified-5e-5 --save_epoch_freq 1 \
  	--real_im_path $dset/real/face \
  	--fake_im_path $dset/fake/face \
 	--which_model_netD resnet34_layer4_extra3 \
     --model patch_inconsistency_discriminator \
 	--lbda 10 --patience 5 --lr_policy constant \
-    --max_epochs 1 --batch_size 512 --lr 5e-5 \
+    --max_epochs 10 --batch_size 512 --lr 5e-5 \
 	--overwrite_config
