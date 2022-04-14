@@ -28,7 +28,7 @@ class BaseModel():
     def name(self):
         return 'BaseModel'
 
-    def set_input(self, input):
+    def set_input(self, input, mode='TRAIN'):
         self.input = input
 
     def forward(self):

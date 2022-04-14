@@ -70,7 +70,7 @@ class PatchDiscriminatorMultiheadSelfAttentionModel(BaseModel):
             self.optimizers['L'] = torch.optim.Adam(
                 self.params, lr=opt.lr, betas=(opt.beta1, 0.999))
 
-    def set_input(self, input):
+    def set_input(self, input, mode='TRAIN'):
         self.ims = input['ims'].to(self.device)
         self.labels = input['labels'].to(self.device)
 

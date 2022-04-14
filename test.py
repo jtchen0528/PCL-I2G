@@ -59,8 +59,8 @@ def run_eval(opt, output_dir):
 
             # forward pass
             model.reset()
-            model.set_input(inputs)
-            model.test(True)
+            model.set_input(inputs, mode = 'TEST')
+            model.test(False)
             predictions = model.get_predictions()
 
             # update counts

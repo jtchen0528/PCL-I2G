@@ -70,7 +70,7 @@ class PatchDiscriminatorModel(BaseModel):
             self.optimizers['D_output'] = torch.optim.Adam(
                 self.net_D_output.parameters(), lr=opt.lr*0.01, betas=(opt.beta1, 0.999))
 
-    def set_input(self, input):
+    def set_input(self, input, mode='TRAIN'):
         self.ims = input['ims'].to(self.device)
         self.labels = input['labels'].to(self.device)
 

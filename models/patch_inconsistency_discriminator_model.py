@@ -60,10 +60,11 @@ class PatchInconsistencyDiscriminatorModel(BaseModel):
             self.optimizers['PCL'] = torch.optim.Adam(
                 self.net_PCL.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 
-    def set_input(self, input):
+    def set_input(self, input, mode='TRAIN'):
         self.ims = input['ims'].to(self.device)
-        self.masks = input['masks'].to(self.device)
         self.labels = input['labels'].to(self.device)
+        if mode == 'TRAIN':
+            self.masks = input['masks'].to(self.device)
 
     def forward(self):
         D_output, D_features = self.net_D(self.ims)
