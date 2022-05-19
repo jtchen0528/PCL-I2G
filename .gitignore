@@ -29,6 +29,5 @@ notes/
 website/
 
 logs/
-scripts/
 /__pycache__
 /.vscode
